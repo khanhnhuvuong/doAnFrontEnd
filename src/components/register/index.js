@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import './index.css';
+import { useHistory, Link } from 'react-router-dom';
 import {
     MDBBtn,
     MDBContainer,
@@ -17,6 +18,8 @@ function Register() {
 
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
+
+    const history = useHistory();
 
     // Khi component được tạo, thiết lập kết nối WebSocket
     useEffect(() => {
@@ -57,6 +60,9 @@ function Register() {
                     // Đăng ký thành công
                     setIsLoginSuccess(true);
                     // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
+                    history.push('/login');
+                    window.location.href = '/login';
+
                 }
             };
         }
@@ -77,10 +83,10 @@ function Register() {
                               onChange={(e) => setPass(e.target.value)}
                     />
                     <div className='d-flex flex-row justify-content-center mb-4'>
-                        <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Đồng ý với điều khỏoản và dịch vụ'/>
+                        <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Đồng ý với điều khoản và dịch vụ'/>
                     </div>
                     <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleRegister}>Đăng ký</MDBBtn>
-                    <p>Bạn đã có tài khoản? <a href="#!">Đăng nhập</a></p>
+                    <p>Bạn đã có tài khoản? <Link to="/">Đăng nhập</Link></p>
                 </MDBCardBody>
             </MDBCard>
         </MDBContainer>

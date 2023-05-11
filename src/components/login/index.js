@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import './index.css';
+import { useHistory, Link } from 'react-router-dom';
 import {
     MDBBtn,
     MDBContainer,
@@ -11,12 +12,13 @@ import {
     from 'mdb-react-ui-kit';
 
 function Login() {
-    const [roomName, setRoomName] = useState("");
+    // const [roomName, setRoomName] = useState("");
     const [socket, setSocket] = useState(null);
     const [isLoginSuccess, setIsLoginSuccess] = useState(false);
 
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
+    const history = useHistory();
 
     // Khi component được tạo, thiết lập kết nối WebSocket
     useEffect(() => {
@@ -33,8 +35,9 @@ function Login() {
         };
     }, []);
 
-    const handleRegister = () => {
-        //Gửi yêu cầu đăng ký đến server WebSocket
+    const handleLogin = () => {
+        //Gửi yêu cầu đăng nhập đến server WebSocket
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const requestData = {
             action: "onchat",
             data: {
@@ -46,6 +49,7 @@ function Login() {
             },
         };
         socket.send(JSON.stringify(requestData));
+
     };
 
     //Sau khi đăng ký thành công, set socket và lưu trữ thông tin để đăng nhập
@@ -53,11 +57,13 @@ function Login() {
         if (socket) {
             socket.onmessage = (event) => {
                 const responseData = JSON.parse(event.data);
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 if (responseData && responseData.status === "success") {
-                    // Đăng ký thành công
+                    // Đăng nhập thành công
                     setIsLoginSuccess(true);
-
                     // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
+                    history.push('/chatApp');
+                    window.location.href = '/chatApp';
                 }
             };
         }
@@ -72,24 +78,20 @@ function Login() {
                     <MDBInput wrapperClass='mb-4' label='Nhập tên người dùng' size='lg' id='form1' type='text'
                               value={user}
                               onChange={(e) => setUser(e.target.value)}
-                              />
-                    {/*<MDBInput wrapperClass='mb-4' label='Nhập email của bạn' size='lg' id='form2' type='email'*/}
-                    {/*          value={email}*/}
-                    {/*          onChange={(e) => setUser(e.target.value)}*/}
-                    {/*          placeholder="Nhập email của bạn"*/}
-                    {/*/>*/}
+                    />
                     <MDBInput wrapperClass='mb-4' label='Nhập mật khẩu của bạn' size='lg' id='form3' type='password'
                               value={pass}
                               onChange={(e) => setPass(e.target.value)}
-                              />
+                    />
                     <div className='d-flex flex-row justify-content-center mb-4'>
                         <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Nhớ tài khoản'/>
                     </div>
-                    <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleRegister}>Đăng nhập</MDBBtn>
-                    <p>Bạn chưa có tài khoản? <a href="#!">Đăng ký</a></p>
+                    <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleLogin}>Đăng nhập</MDBBtn>
+                    <p>Bạn chưa có tài khoản? <Link to="/register">Đăng ký</Link></p>
                 </MDBCardBody>
             </MDBCard>
         </MDBContainer>
+
     );
 }
 
