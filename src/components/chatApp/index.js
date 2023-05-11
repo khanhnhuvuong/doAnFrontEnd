@@ -1,5 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import './index.css';
+import { useHistory, Link } from 'react-router-dom';
+
 import {
     MDBContainer,
     MDBRow,
@@ -10,14 +12,33 @@ import {
     MDBBtn,
     MDBTypography,
     MDBTextArea,
-    MDBCardHeader,
+    MDBCardHeader, MDBInput,
 } from "mdb-react-ui-kit";
 
-export default function Chat() {
+function Chat() {
+    const [socket, setSocket] = useState(null);
+    const history = useHistory();
+
+    const handleLogout = () => {
+        //Gửi yêu cầu đăng ký đến server WebSocket
+        const requestData = {
+            action: "onchat",
+            data: {
+                event: "LOGOUT",
+            },
+        };
+        history.push("/");
+    };
+
+
     return (
         <MDBContainer fluid className="py-5 gradient-custom">
             <MDBRow>
                 <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+                    <MDBInput wrapperClass='mb-2' label='Nhập tên phòng' size='lg' id='form1' type='text'/>
+                    <MDBBtn className='w-20 m-lg-3 gradient-custom-3' size='lg' onClick={handleLogout}>Thêm</MDBBtn>
+                    <MDBBtn className='w-50 m-lg-3 gradient-custom-3' size='lg' onClick={handleLogout}>Đăng xuất</MDBBtn>
+
                     <h5 className="font-weight-bold mb-3 text-center text-white">
                         Member
                     </h5>
@@ -298,3 +319,5 @@ export default function Chat() {
         </MDBContainer>
     );
 }
+
+export default Chat;
