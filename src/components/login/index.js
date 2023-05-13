@@ -14,8 +14,7 @@ import {
 function Login() {
     // const [roomName, setRoomName] = useState("");
     const [socket, setSocket] = useState(null);
-    const [isLoginSuccess, setIsLoginSuccess] = useState(false);
-
+    const [userList, setUserList] = useState([]);
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
     const history = useHistory();
@@ -35,9 +34,8 @@ function Login() {
         };
     }, []);
 
-    const handleLogin = () => {
-        //Gửi yêu cầu đăng nhập đến server WebSocket
-        // eslint-disable-next-line react-hooks/rules-of-hooks
+    const handleGetUserList = () => {
+        // Gửi yêu cầu lấy danh sách user tới WebSocket Server
         const requestData = {
             action: "onchat",
             data: {
@@ -49,25 +47,68 @@ function Login() {
             },
         };
         socket.send(JSON.stringify(requestData));
+        const loginData = {
+            action: 'onchat',
+            data: {
+                event: 'GET_USER_LIST',
+            },
+        };
+        socket.send(JSON.stringify(loginData));
+        console.log("Đã gửi yêu cầu lấy danh sách cho server")
+        socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+                const users = response.data;
+                setUserList(users);
+                history.push('/home', {userList : users})
+            }
+        }
+    }
 
-    };
-
-    //Sau khi đăng ký thành công, set socket và lưu trữ thông tin để đăng nhập
     useEffect(() => {
         if (socket) {
             socket.onmessage = (event) => {
                 const responseData = JSON.parse(event.data);
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                if (responseData && responseData.status === "success") {
+                if (responseData.action === "onchat" && responseData.data.event === "success") {
                     // Đăng nhập thành công
-                    setIsLoginSuccess(true);
-                    // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
-                    history.push('/chatApp');
-                    window.location.href = '/chatApp';
                 }
             };
         }
     }, [socket]);
+    // const handleLogin = () => {
+    //     //Gửi yêu cầu đăng nhập đến server WebSocket
+    //     // eslint-disable-next-line react-hooks/rules-of-hooks
+    //     const requestData = {
+    //         action: "onchat",
+    //         data: {
+    //             event: "LOGIN",
+    //             data: {
+    //                 user: user,
+    //                 pass: pass,
+    //             },
+    //         },
+    //     };
+    //     socket.send(JSON.stringify(requestData));
+    //
+    // };
+    //
+    // //Sau khi đăng ký thành công, set socket và lưu trữ thông tin để đăng nhập
+    // useEffect(() => {
+    //     if (socket) {
+    //         socket.onmessage = (event) => {
+    //             const responseData = JSON.parse(event.data);
+    //             // eslint-disable-next-line react-hooks/rules-of-hooks
+    //             if (responseData && responseData.status === "success") {
+    //                 // Đăng nhập thành công
+    //                 setIsLoginSuccess(true);
+    //                 // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
+    //                 history.push('/home');
+    //                 // window.location.href = '/home';
+    //             }
+    //         };
+    //     }
+    // }, [socket]);
 
     return (
         <MDBContainer fluid className='d-flex align-items-center justify-content-center'>
@@ -86,7 +127,7 @@ function Login() {
                     <div className='d-flex flex-row justify-content-center mb-4'>
                         <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Nhớ tài khoản'/>
                     </div>
-                    <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleLogin}>Đăng nhập</MDBBtn>
+                    <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleGetUserList}>Đăng nhập</MDBBtn>
                     <p>Bạn chưa có tài khoản? <Link to="/register">Đăng ký</Link></p>
                 </MDBCardBody>
             </MDBCard>
