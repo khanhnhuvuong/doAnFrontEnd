@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import './chatApp.css';
-import { useHistory, Link } from 'react-router-dom';
+import {useHistory, Link, useLocation} from 'react-router-dom';
 
 import {
     MDBContainer,
@@ -14,43 +13,30 @@ import {
     MDBTextArea,
     MDBCardHeader, MDBInput,
 } from "mdb-react-ui-kit";
+import ChatList from "../components/chatApp/chatList";
 import ChatBox from "../components/chatApp/chatBox";
 
-function Chat() {
+function Home() {
     const [socket, setSocket] = useState(null);
-    const history = useHistory();
 
-    const handleLogout = () => {
-        //Gửi yêu cầu đăng ký đến server WebSocket
-        const requestData = {
-            action: "onchat",
-            data: {
-                event: "LOGOUT",
-            },
-        };
-        history.push("/");
+    useEffect(() => {
+        const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
-        // if (response.ok) {
-        //     const { token } = await response.json();
-        //     localStorage.setItem('token', token);
-        //     // Đặt trạng thái xác thực trong ứng dụng của bạn
-        // } else {
-        //     // Xử lý lỗi đăng nhập
-        // }
-    };
+        newSocket.addEventListener("open", (event) => {
+            console.log("Kết nối WebSocket đã được thiết lập", event);
+            setSocket(newSocket);
+        });
+    }, []);
 
-    const ChatList = ({ message }) => {
-
-    }
 
     return (
         <MDBContainer fluid className="py-5 gradient-custom" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
-                <ChatBox/>
                 <ChatList/>
+                <ChatBox/>
             </MDBRow>
         </MDBContainer>
     );
 }
 
-export default Chat;
+export default Home;
