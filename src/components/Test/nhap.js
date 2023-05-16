@@ -54,3 +54,46 @@
 //         };
 //     }
 // }, [socket]);
+// else {
+//     const requestRelogin = {
+//         action: "onchat",
+//         data: {
+//             event: "RE_LOGIN",
+//             data: {
+//                 user: sessionStorage.getItem('user'),
+//                 code: sessionStorage.getItem('relogin_code')
+//             },
+//         },
+//     };
+//     socket.send(JSON.stringify(requestRelogin));
+//     console.log("tin nhan da duoc chon");
+//     const sendMess = {
+//         action: 'onchat',
+//         data: {
+//             event: 'SEND_CHAT',
+//             data: {
+//                 type: 'room',
+//                 to: 'nhu',
+//                 mes: 'heloooooooo ca nha',
+//             }
+//         },
+//     };
+//     socket.send(JSON.stringify(sendMess));
+//     console.log("Đã gửi tin nhắn lên cho server")
+//     socket.onmessage = (event) => {
+//         const response = JSON.parse(event.data);
+//         if (response.status === 'success' && response.event === 'RE_LOGIN') {
+//             console.log("Đã relogin thành công")
+//         } else {
+//             console.log(response.mes)
+//         }
+//         if (response.status === 'success' && response.event === 'SEND_CHAT') {
+//             const chatContent = response.data;
+//             setChatContent(chatContent);
+//             console.log(chatContent);
+//         } else {
+//             console.log(response.mes)
+//         }
+//     }
+
+
