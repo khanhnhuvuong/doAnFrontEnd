@@ -15,7 +15,7 @@ function UserListPage() {
             <ul>
                 {userList.map((user, index) => (
                     <li key={index} className="list-group-item">
-                        <a href="#!" className="d-flex justify-content-between">
+                        <a href="src/components/chatApp#!" className="d-flex justify-content-between">
                             <div className="d-flex flex-row">
                                 <img
                                     src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"

@@ -15,8 +15,10 @@ function Login() {
     // const [roomName, setRoomName] = useState("");
     const [socket, setSocket] = useState(null);
     const [userList, setUserList] = useState([]);
+    const [isLogin, setIsLogin] = useState(false);
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
+
     const history = useHistory();
 
     // Khi component được tạo, thiết lập kết nối WebSocket
@@ -47,68 +49,49 @@ function Login() {
             },
         };
         socket.send(JSON.stringify(requestData));
-        const loginData = {
+
+        console.log("da gui thong tin login cho server")
+
+        const requestListUser = {
             action: 'onchat',
             data: {
                 event: 'GET_USER_LIST',
             },
         };
-        socket.send(JSON.stringify(loginData));
+        socket.send(JSON.stringify(requestListUser));
         console.log("Đã gửi yêu cầu lấy danh sách cho server")
         socket.onmessage = (event) => {
             const response = JSON.parse(event.data);
-            if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+            if (response && response.status === "success" &&  response.event === "LOGIN") {
+                sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+                console.log("Đã lưu relogin_code vào session");
+                setIsLogin(true);
+            }
+            if (response.status === "success" && response.event === "GET_USER_LIST") {
                 const users = response.data;
                 setUserList(users);
-                history.push('/home', {userList : users})
+                // setIsLogin(true);
+                console.log("da luu vao user");
+                history.push('/home', {userList : users});
             }
         }
     }
 
     useEffect(() => {
+        if (isLogin) {
+            sessionStorage.setItem('user', user);
+            sessionStorage.setItem('pass', pass);
+        }
         if (socket) {
             socket.onmessage = (event) => {
                 const responseData = JSON.parse(event.data);
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                if (responseData.action === "onchat" && responseData.data.event === "success") {
-                    // Đăng nhập thành công
+                if (responseData && responseData.status === "success") {
+                sessionStorage.setItem('re_login_code', responseData.data.RE_LOGIN_CODE);
                 }
             };
         }
-    }, [socket]);
-    // const handleLogin = () => {
-    //     //Gửi yêu cầu đăng nhập đến server WebSocket
-    //     // eslint-disable-next-line react-hooks/rules-of-hooks
-    //     const requestData = {
-    //         action: "onchat",
-    //         data: {
-    //             event: "LOGIN",
-    //             data: {
-    //                 user: user,
-    //                 pass: pass,
-    //             },
-    //         },
-    //     };
-    //     socket.send(JSON.stringify(requestData));
-    //
-    // };
-    //
-    // //Sau khi đăng ký thành công, set socket và lưu trữ thông tin để đăng nhập
-    // useEffect(() => {
-    //     if (socket) {
-    //         socket.onmessage = (event) => {
-    //             const responseData = JSON.parse(event.data);
-    //             // eslint-disable-next-line react-hooks/rules-of-hooks
-    //             if (responseData && responseData.status === "success") {
-    //                 // Đăng nhập thành công
-    //                 setIsLoginSuccess(true);
-    //                 // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
-    //                 history.push('/home');
-    //                 // window.location.href = '/home';
-    //             }
-    //         };
-    //     }
-    // }, [socket]);
+    }, [socket, isLogin, user, pass]);
 
     return (
         <MDBContainer fluid className='d-flex align-items-center justify-content-center'>
