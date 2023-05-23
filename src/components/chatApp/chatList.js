@@ -64,7 +64,7 @@ export default function ChatList({handleClickMess}) {
                         width="70"
                     />
                     <div className="pt-1 mt-3">
-                        <h4 className="fw-bold font mb-0">Khanh Nhu</h4>
+                        <h4 className="fw-bold font mb-0">{sessionStorage.getItem('user')}</h4>
                     </div>
                 </div>
                 <MDBBtn className='h-25 mt-4 gradient-custom-3' size='lg' onClick={handleLogout}>Đăng
