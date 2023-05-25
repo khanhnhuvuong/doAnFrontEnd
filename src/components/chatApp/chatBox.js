@@ -13,30 +13,22 @@ import {
 } from "mdb-react-ui-kit";
 import TextArea from "./textArea";
 
-export default function ChatBox(props, {handleSendMessage}) {
-    const [selectedMess, setSelectedMess] = useState(null);
-    const {chatContent} = props;
-    const [mess, setMess] = useState('');
-
-    //Click để tải lên được tin nhắn của người dùng
-    useEffect(() => {
-        if (selectedMess) {
-
-        }
-    }, [selectedMess]);
+export default function ChatBox(props) {
+    const { chatContent } = props;
 
     return (
         <MDBCol md="6" lg="7" xl="8">
             <MDBTypography listUnStyled>
                 <ul>
                     {chatContent.map((mess, index) => (
-                        <div key={index} style={{width: '800px'}}>
+
+                        <div key={index} style={{ width: '800px' }}>
                             {mess.name === sessionStorage.getItem('user') ? (
-                                <li style={{textAlign: 'right'}} className="d-flex mb-3">
-                                    <MDBCard style={{width: '800px'}}>
+                                <li style={{ textAlign: 'right' }} className="d-flex mb-3">
+                                    <MDBCard style={{ width: '800px' }}>
                                         <MDBCardHeader className="d-flex p-3">
                                             <p className="fw-bold mb-0">{mess.name}</p>
-                                            <p className="text-muted small mb-0" style={{marginLeft: '460px'}}>
+                                            <p className="text-muted small mb-0" style={{ marginLeft: '460px' }}>
                                                 {mess.createAt}
                                             </p>
                                         </MDBCardHeader>
@@ -51,7 +43,7 @@ export default function ChatBox(props, {handleSendMessage}) {
                                         alt="avatar"
                                         className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                                         width="60"
-                                        style={{marginLeft: '20px'}}
+                                        style={{ marginLeft: '20px' }}
                                     />
                                 </li>
                             ) : (
@@ -62,10 +54,10 @@ export default function ChatBox(props, {handleSendMessage}) {
                                         className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                                         width="60"
                                     />
-                                    <MDBCard style={{width: '700px'}}>
+                                    <MDBCard style={{ width: '700px' }}>
                                         <MDBCardHeader className="d-flex p-3">
                                             <p className="fw-bold mb-0">{mess.name}</p>
-                                            <p className="text-muted small mb-0" style={{marginLeft: '460px'}}>
+                                            <p className="text-muted small mb-0" style={{ marginLeft: '460px' }}>
                                                 {mess.createAt}
                                             </p>
                                         </MDBCardHeader>
@@ -80,9 +72,8 @@ export default function ChatBox(props, {handleSendMessage}) {
                         </div>
                     ))}
                 </ul>
-               <TextArea/>
+                <TextArea />
             </MDBTypography>
         </MDBCol>
-
     );
 }
