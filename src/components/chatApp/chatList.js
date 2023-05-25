@@ -21,6 +21,8 @@ export default function ChatList({handleClickMess}) {
     const location = useLocation();
     const userList = location.state?.userList || [];
     const [userListChat, setUserListChat] = useState([]);
+    // const [newUserName, setNewUserName] = useState("");
+
 
     useEffect(() => {
         console.log(userList); // Đảm bảo danh sách người dùng được cập nhật
@@ -69,6 +71,24 @@ export default function ChatList({handleClickMess}) {
         }
     };
 
+    const handleCreateRoom = () => {
+        const roomName = document.getElementById('roomName').value;
+        if (roomName) {
+            // Gửi yêu cầu tạo phòng đến server WebSocket
+            const requestData = {
+                action: "onchat",
+                data: {
+                    event: "CREATE_ROOM",
+                    data: {
+                        name: roomName
+                    }
+                }
+            };
+            // Gửi requestData tới server WebSocket
+            socket.send(JSON.stringify(requestData));
+        }
+    };
+
 
     return (
         <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
@@ -90,15 +110,24 @@ export default function ChatList({handleClickMess}) {
             <MDBCard>
                 <MDBCardBody>
                     <div className="input-group mb-3">
-                        <MDBInput label='Nhập tên người dùng' size='lg' id='form1'
-                                  type='text'
+                        <MDBInput
+                            label="Nhập tên người dùng"
+                            size="lg"
+                            id='roomName'
+                            type="text"
+                            // value={newUserName}
+                            // onChange={e => setNewUserName(e.target.value)}
                         />
-                        <button type="button" className="btn btn-primary">
+
+                        <button type="button" className="btn btn-primary" onClick={handleCreateRoom}>
                             Thêm
                         </button>
+
                         <div className="form-check align-content-end">
                             <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                             <label className="form-check-label" for="flexCheckDefault">Room</label>
+
+
                         </div>
                     </div>
                     <MDBTypography listUnStyled className="mb-0" style={{height: "500px", overflow: "scroll"}}>
@@ -109,7 +138,7 @@ export default function ChatList({handleClickMess}) {
                                         <div className="d-flex flex-row">
                                             {user.type == 0 ? (
                                                 <img
-                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBba0js-FmmQZDKqlMWoxKtzoT5Fg_mpdeMw&usqp=CAU"
+                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBba0js...usqp=CAU"
                                                     alt="avatar"
                                                     className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
                                                     width="60"
@@ -139,8 +168,6 @@ export default function ChatList({handleClickMess}) {
                 </MDBCardBody>
             </MDBCard>
         </MDBCol>
-);
+
+    );
 }
-
-
-
