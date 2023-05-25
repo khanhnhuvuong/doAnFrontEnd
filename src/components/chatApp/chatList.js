@@ -53,6 +53,23 @@ export default function ChatList({handleClickMess}) {
         };
         history.push("/");
     };
+    const handleCreateRoom = () => {
+        const roomName = document.getElementById('roomName').value;
+        if (roomName) {
+            // Gửi yêu cầu tạo phòng đến server WebSocket
+            const requestData = {
+                action: "onchat",
+                data: {
+                    event: "CREATE_ROOM",
+                    data: {
+                        name: roomName
+                    }
+                }
+            };
+            // Gửi requestData tới server WebSocket
+            socket.send(JSON.stringify(requestData));
+        }
+    };
 
     const handleCreateRoom = () => {
         const roomName = document.getElementById('roomName').value;
@@ -106,9 +123,11 @@ export default function ChatList({handleClickMess}) {
                             Thêm
                         </button>
 
-                        <div class="form-check align-content-end">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Room</label>
+                        <div className="form-check align-content-end">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" for="flexCheckDefault">Room</label>
+
+
                         </div>
                     </div>
                     <MDBTypography listUnStyled className="mb-0" style={{height: "500px", overflow: "scroll"}}>
