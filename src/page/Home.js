@@ -177,6 +177,7 @@ function Home() {
                     },
                 })
             );
+
             // socket.send(JSON.stringify({
             //         action: "onchat",
             //         data: {
@@ -185,6 +186,7 @@ function Home() {
             //     }
             // ));
             // setSocket(socket);
+
 
         });
 
@@ -204,6 +206,7 @@ function Home() {
                         <ChatBox selectedMess={selectedMess} chatContent={chatContent} />
                         <TextArea handleSendMessageClick={handleSendMessage} selectedMess={selectedMess} />
                         </MDBCol>
+
                 )}
             </MDBRow>
         </MDBContainer>

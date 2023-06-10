@@ -1,51 +1,39 @@
-import React, {useEffect, useState} from "react";
-import './chatApp.css';
-import {useHistory, Link, useLocation} from 'react-router-dom';
+import React, { useState } from "react";
 
-import {
-    MDBContainer,
-    MDBRow,
-    MDBCol,
-    MDBCard,
-    MDBCardBody,
-    MDBIcon,
-    MDBBtn,
-    MDBTypography,
-    MDBTextArea,
-    MDBCardHeader, MDBInput,
-} from "mdb-react-ui-kit";
+function TextArea({ handleSendMessageClick, selectedMess }) {
+    const [message, setMessage] = useState("");
 
-export default function TextArea({handleSendMessage}) {
-    const [socket, setSocket] = useState(null);
-    const [mess, setMess] = useState('');
-    const [selectedMess, setSelectedMess] = useState(null);
+    const handleMessageChange = (event) => {
+        setMessage(event.target.value);
+    };
 
+    const handleSendMessage = () => {
+        handleSendMessageClick(message);
+        setMessage("");
+    };
 
-    useEffect(() => {
-        const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
-
-        newSocket.addEventListener("open", (event) => {
-            console.log("Kết nối WebSocket đã được thiết lập", event);
-            setSocket(newSocket);
-        });
-
-        return () => {
-            // Đóng kết nối WebSocket khi component bị hủy
-            newSocket.close();
-        };
-    }, []);
+    if (!selectedMess) {
+        return null; // Ẩn trang TextArea khi không có selectedMess
+    }
 
     return (
-        <><MDBTextArea
-            label="Message"
-            id="textAreaExample"
-            rows={4}
-            value={mess}
-            onChange={(e) => setMess(e.target.value)}
-        />
-            <MDBBtn color="info" rounded className="float-end" onClick={handleSendMessage}>
+        <div className="text-area">
+      <textarea
+          className="form-control"
+          rows="3"
+          placeholder="Enter your message..."
+          value={message}
+          onChange={handleMessageChange}
+      ></textarea>
+            <button
+                className="btn btn-primary  text-right "
+                onClick={handleSendMessage}
+                disabled={!selectedMess || !message}
+            >
                 Send
-            </MDBBtn></>
+            </button>
+        </div>
     );
 }
 
+export default TextArea;

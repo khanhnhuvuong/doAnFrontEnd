@@ -67,6 +67,7 @@ export default function ChatList({ handleClickMess }) {
         // Đóng kết nối khi component unmount
         return () => {
             socket.close();
+
         };
     }, []);
 
@@ -146,19 +147,50 @@ export default function ChatList({ handleClickMess }) {
             <MDBCard>
                 <MDBCardBody>
                     <div className="input-group mb-3">
-                        <MDBInput label='Nhập tên người dùng'
-                                  value={roomName}
-                                  onChange={(e) => setRoomName(e.target.value)}
-                                  style={{width: '180px'}}
+                        <MDBInput
+                            label="Nhập tên người dùng"
+                            size="lg"
+                            id="roomName"
+                            type="text"
+                            value={roomName}
+                            onChange={handleRoomNameChange} // Thêm sự kiện onChange để cập nhật tên phòng chat
                         />
-                        <button type="button" className="btn btn-primary">
-                            <i className="fas fa-plus"></i>
+
+                        <button type="button" className="btn btn-primary" onClick={handleCreateRoom}>
+                            Thêm
                         </button>
-                        <div class="form-check align-content-end">
-                            <input class="form-check-input"
-                                   style={{marginLeft: '10px'}}
-                                   type="checkbox" value="" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Room</label>
+
+                        <MDBInput
+                            label="Tìm kiếm tin nhắn"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+
+                        {searchResults.map((result, index) => (
+                            <li key={index}>{result.name}</li>
+                        ))}
+
+                        <MDBBtn onClick={handleSearch}>Tìm kiếm</MDBBtn>
+
+                        {/*<MDBInput*/}
+                        {/*    label="Tìm kiếm tin nhắn"*/}
+                        {/*    value={searchQuery}*/}
+                        {/*    onChange={(e) => {*/}
+                        {/*        setSearchQuery(e.target.value);*/}
+                        {/*        handleSearch();*/}
+                        {/*    }}*/}
+                        {/*/>*/}
+
+                        <div className="form-check align-content-end">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckDefault"
+                                checked={isChecked}
+                                onChange={handleCheckboxChange} // Thêm sự kiện onChange cho checkbox
+                            />
+                            <label className="form-check-label" htmlFor="flexCheckDefault">Room</label>
                         </div>
 
                         <MDBInput
@@ -200,9 +232,9 @@ export default function ChatList({ handleClickMess }) {
                                 <li key={index} className="list-group-item" onClick={() => handleClickMess(user.name, user.type)}>
                                     <a className="d-flex justify-content-between">
                                         <div className="d-flex flex-row">
-                                            {user.type == 0 ? (
+                                            {user.type === 0 ? (
                                                 <img
-                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBba0js-FmmQZDKqlMWoxKtzoT5Fg_mpdeMw&usqp=CAU"
+                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBba0js...usqp=CAU"
                                                     alt="avatar"
                                                     className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
                                                     width="50"
@@ -217,8 +249,7 @@ export default function ChatList({ handleClickMess }) {
                                             )}
                                             <div className="pt-1">
                                                 <p className="fw-bold mt-3">{user.name}</p>
-                                                <p className="small text-muted">
-                                                </p>
+                                                <p className="small text-muted"></p>
                                             </div>
                                         </div>
                                         <div className="pt-1">
