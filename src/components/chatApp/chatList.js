@@ -54,14 +54,14 @@ export default function ChatList({ handleClickMess }) {
                 }
             ));
 
-            // socket.onmessage = (event) => {
-            //     const response = JSON.parse(event.data);
-            //     if (response.status === 'success' && response.event === 'GET_USER_LIST') {
-            //         const newRoom = response.data;
-            //         setRoomName(newRoom);
-            //     }
-            // }
-            // setSocket(socket);
+            socket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+                if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+                    const newRoom = response.data;
+                    setRoomName(newRoom);
+                }
+            }
+            setSocket(socket);
         });
 
         // Đóng kết nối khi component unmount
@@ -159,39 +159,6 @@ export default function ChatList({ handleClickMess }) {
                         <button type="button" className="btn btn-primary" onClick={handleCreateRoom}>
                             Thêm
                         </button>
-
-                        <MDBInput
-                            label="Tìm kiếm tin nhắn"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-
-                        {searchResults.map((result, index) => (
-                            <li key={index}>{result.name}</li>
-                        ))}
-
-                        <MDBBtn onClick={handleSearch}>Tìm kiếm</MDBBtn>
-
-                        {/*<MDBInput*/}
-                        {/*    label="Tìm kiếm tin nhắn"*/}
-                        {/*    value={searchQuery}*/}
-                        {/*    onChange={(e) => {*/}
-                        {/*        setSearchQuery(e.target.value);*/}
-                        {/*        handleSearch();*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-
-                        <div className="form-check align-content-end">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value=""
-                                id="flexCheckDefault"
-                                checked={isChecked}
-                                onChange={handleCheckboxChange} // Thêm sự kiện onChange cho checkbox
-                            />
-                            <label className="form-check-label" htmlFor="flexCheckDefault">Room</label>
-                        </div>
 
                         <MDBInput
                             label="Tìm kiếm tin nhắn"

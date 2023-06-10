@@ -17,10 +17,11 @@ function TextArea({ handleSendMessageClick, selectedMess }) {
     }
 
     return (
-        <div className="text-area">
+        <div className="text-area" style={{width: '800px', display: 'flex'}}>
       <textarea
+          style={{width: '732px'}}
           className="form-control"
-          rows="3"
+          rows="1"
           placeholder="Enter your message..."
           value={message}
           onChange={handleMessageChange}

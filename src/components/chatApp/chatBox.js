@@ -17,63 +17,64 @@ export default function ChatBox(props) {
     const { chatContent } = props;
 
     return (
-        <MDBCol md="6" lg="7" xl="8">
-            <MDBTypography listUnStyled>
-                <ul>
-                    {chatContent.map((mess, index) => (
+        <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}}>
+            <ul>
+                {chatContent.map((mess, index) => (
 
-                        <div key={index} style={{ width: '800px' }}>
-                            {mess.name === sessionStorage.getItem('user') ? (
-                                <li style={{ textAlign: 'right' }} className="d-flex mb-3">
-                                    <MDBCard style={{ width: '800px' }}>
-                                        <MDBCardHeader className="d-flex p-3">
-                                            <p className="fw-bold mb-0">{mess.name}</p>
-                                            <p className="text-muted small mb-0" style={{ marginLeft: '460px' }}>
-                                                {mess.createAt}
-                                            </p>
-                                        </MDBCardHeader>
-                                        <MDBCardBody>
-                                            <p className="mb-0">
+                    <div key={index} style={{ width: '750px' }}>
+                        {mess.name === sessionStorage.getItem('user') ? (
+                            <li className="d-flex mb-3">
+                                <MDBCardBody className="p-0 m-lg-1">
+                                    <div className="d-flex"
+                                         style={{marginLeft: '537px'}}>
+                                        <p className="small mb-1 text-muted"
+                                        >{mess.createAt} -</p>
+                                        <p className="small mb-1 fw-bold"
+                                           style={{marginLeft: '5px'}}>{mess.name}</p>
+                                    </div>
+                                    <div className="d-flex flex-row justify-content-end mb-4 pt-1">
+                                        <div>
+                                            <p className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
                                                 {mess.mes}
                                             </p>
-                                        </MDBCardBody>
-                                    </MDBCard>
-                                    <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-                                        alt="avatar"
-                                        className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-                                        width="60"
-                                        style={{ marginLeft: '20px' }}
-                                    />
-                                </li>
-                            ) : (
-                                <li className="d-flex mb-4">
-                                    <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-                                        alt="avatar"
-                                        className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-                                        width="60"
-                                    />
-                                    <MDBCard style={{ width: '700px' }}>
-                                        <MDBCardHeader className="d-flex p-3">
-                                            <p className="fw-bold mb-0">{mess.name}</p>
-                                            <p className="text-muted small mb-0" style={{ marginLeft: '460px' }}>
-                                                {mess.createAt}
-                                            </p>
-                                        </MDBCardHeader>
-                                        <MDBCardBody>
-                                            <p className="mb-0">
+                                        </div>
+                                        <img
+                                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                                            alt="avatar 1"
+                                            style={{ width: "45px", height: "100%" }}
+                                        />
+                                    </div>
+                                </MDBCardBody>
+                            </li>
+                        ) : (
+                            <li className="d-flex mb-4">
+                                <MDBCardBody className="p-0 m-lg-1">
+                                    <div className="d-flex">
+                                        <p className="small mb-1 fw-bold ">{mess.name} -</p>
+                                        <p className="small mb-1 text-muted"
+                                           style={{marginLeft: '5px'}}>{mess.createAt}</p>
+                                    </div>
+                                    <div className="d-flex flex-row justify-content-start">
+                                        <img
+                                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                                            alt="avatar 1"
+                                            style={{ width: "45px", height: "100%" }}
+                                        />
+                                        <div>
+                                            <p
+                                                className="small p-2 ms-3 mb-3 rounded-3"
+                                                style={{ backgroundColor: "#f5f6f7" }}
+                                            >
                                                 {mess.mes}
                                             </p>
-                                        </MDBCardBody>
-                                    </MDBCard>
-                                </li>
-                            )}
-                        </div>
-                    ))}
-                </ul>
-                <TextArea />
-            </MDBTypography>
-        </MDBCol>
+                                        </div>
+                                    </div>
+                                </MDBCardBody>
+                            </li>
+                        )}
+                    </div>
+                ))}
+            </ul>
+        </MDBTypography>
     );
 }
