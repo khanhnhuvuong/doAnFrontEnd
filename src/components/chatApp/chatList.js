@@ -33,22 +33,41 @@ export default function ChatList({ handleClickMess }) {
     }, [userList]);
 
     useEffect(() => {
-        const newSocket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+        // Khởi tạo kết nối với server qua websocket
+        const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
-        newSocket.addEventListener("open", () => {
-            console.log("Kết nối WebSocket đã được thiết lập");
-            setSocket(newSocket);
+        socket.addEventListener("open", () => {
+            console.log("WebSocket connection established.");
+            const username = sessionStorage.getItem('user');
+            const code = sessionStorage.getItem('code');
+
+            // Gửi message RE_LOGIN để đăng nhập lại với thông tin user và code
+            socket.send(JSON.stringify({
+                    action: "onchat",
+                    data: {
+                        event: "RE_LOGIN",
+                        data: {
+                            user: username,
+                            code: code,
+                        }
+                    }
+                }
+            ));
+
+            // socket.onmessage = (event) => {
+            //     const response = JSON.parse(event.data);
+            //     if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+            //         const newRoom = response.data;
+            //         setRoomName(newRoom);
+            //     }
+            // }
+            // setSocket(socket);
         });
 
-        newSocket.addEventListener("close", () => {
-            console.log("Kết nối WebSocket đã đóng");
-        });
-
+        // Đóng kết nối khi component unmount
         return () => {
-            // Đóng kết nối WebSocket khi component bị hủy
-            if (socket) {
-                socket.close();
-            }
+            socket.close();
+
         };
     }, []);
 
@@ -111,18 +130,19 @@ export default function ChatList({ handleClickMess }) {
     return (
         <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
             <a href="#!" className="d-flex justify-content-between">
-                <div className="d-flex flex-row m-3">
+                <div className="d-flex flex-row m-2">
                     <img
                         src="https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-avatar-don-gian-cho-nu_081757692.jpg"
                         alt="avatar"
                         className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                        width="70"
+                        width="50"
                     />
-                    <div className="pt-1 mt-3">
+                    <div className="pt-1" style={{marginTop: '5px'}}>
                         <h4 className="fw-bold font mb-0">{sessionStorage.getItem('user')}</h4>
                     </div>
                 </div>
-                <MDBBtn className='h-25 mt-4 gradient-custom-3' size='lg' onClick={handleLogout}>Đăng Xuất</MDBBtn>
+                <MDBBtn style={{height: '45px'}}
+                        className='mt-2 gradient-custom-3' size='lg' onClick={handleLogout}>Đăng Xuất</MDBBtn>
             </a>
             <MDBCard>
                 <MDBCardBody>
@@ -172,8 +192,41 @@ export default function ChatList({ handleClickMess }) {
                             />
                             <label className="form-check-label" htmlFor="flexCheckDefault">Room</label>
                         </div>
+
+                        <MDBInput
+                            label="Tìm kiếm tin nhắn"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+
+                        {searchResults.map((result, index) => (
+                            <li key={index}>{result.name}</li>
+                        ))}
+
+                        <MDBBtn onClick={handleSearch}>Tìm kiếm</MDBBtn>
+
+                        {/*<MDBInput*/}
+                        {/*    label="Tìm kiếm tin nhắn"*/}
+                        {/*    value={searchQuery}*/}
+                        {/*    onChange={(e) => {*/}
+                        {/*        setSearchQuery(e.target.value);*/}
+                        {/*        handleSearch();*/}
+                        {/*    }}*/}
+                        {/*/>*/}
+
+                        <div className="form-check align-content-end">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckDefault"
+                                checked={isChecked}
+                                onChange={handleCheckboxChange} // Thêm sự kiện onChange cho checkbox
+                            />
+                            <label className="form-check-label" htmlFor="flexCheckDefault">Room</label>
+                        </div>
                     </div>
-                    <MDBTypography listUnStyled className="mb-0" style={{ height: "500px", overflow: "scroll" }}>
+                    <MDBTypography listUnStyled className="mb-0" style={{height: "415px", overflow: "scroll"}}>
                         <ul className="list-group list-group-light list-group-small">
                             {userList.map((user, index) => (
                                 <li key={index} className="list-group-item" onClick={() => handleClickMess(user.name, user.type)}>
@@ -184,14 +237,14 @@ export default function ChatList({ handleClickMess }) {
                                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBba0js...usqp=CAU"
                                                     alt="avatar"
                                                     className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                                                    width="60"
+                                                    width="50"
                                                 />
                                             ) : (
                                                 <img
                                                     src="https://cdn-icons-png.flaticon.com/512/166/166258.png"
                                                     alt="avatar"
                                                     className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-                                                    width="60"
+                                                    width="50"
                                                 />
                                             )}
                                             <div className="pt-1">

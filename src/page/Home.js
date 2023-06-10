@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { MDBContainer, MDBRow } from "mdb-react-ui-kit";
+import {MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
 import ChatList from "../components/chatApp/chatList";
 import ChatBox from "../components/chatApp/chatBox";
 import TextArea from "../components/chatApp/textArea";
@@ -178,7 +178,16 @@ function Home() {
                 })
             );
 
-            setSocket(socket);
+            // socket.send(JSON.stringify({
+            //         action: "onchat",
+            //         data: {
+            //             event: "GET_USER_LIST",
+            //         }
+            //     }
+            // ));
+            // setSocket(socket);
+
+
         });
 
         // Đóng kết nối khi component unmount
@@ -189,14 +198,15 @@ function Home() {
 
 
     return (
-        <MDBContainer fluid className="py-5 gradient-custom" style={{ backgroundColor: "#eee" }}>
+        <MDBContainer fluid className="py-2 gradient-custom" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
                 <ChatList userList={userList} handleClickMess={handleClickMess} />
                 {selectedMess && (
-                    <>
+                        <MDBCol md="6" lg="7" xl="8">
                         <ChatBox selectedMess={selectedMess} chatContent={chatContent} />
                         <TextArea handleSendMessageClick={handleSendMessage} selectedMess={selectedMess} />
-                    </>
+                        </MDBCol>
+
                 )}
             </MDBRow>
         </MDBContainer>
