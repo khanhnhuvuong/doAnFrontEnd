@@ -202,11 +202,10 @@ function Home() {
             <MDBRow>
                 <ChatList userList={userList} handleClickMess={handleClickMess} />
                 {selectedMess && (
-                        <MDBCol md="6" lg="7" xl="8">
+                    <MDBCol md="6" lg="7" xl="8">
                         <ChatBox selectedMess={selectedMess} chatContent={chatContent} />
                         <TextArea handleSendMessageClick={handleSendMessage} selectedMess={selectedMess} />
-                        </MDBCol>
-
+                    </MDBCol>
                 )}
             </MDBRow>
         </MDBContainer>
