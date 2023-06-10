@@ -54,14 +54,14 @@ export default function ChatList({ handleClickMess }) {
                 }
             ));
 
-            // socket.onmessage = (event) => {
-            //     const response = JSON.parse(event.data);
-            //     if (response.status === 'success' && response.event === 'GET_USER_LIST') {
-            //         const newRoom = response.data;
-            //         setRoomName(newRoom);
-            //     }
-            // }
-            // setSocket(socket);
+            socket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+                if (response.status === 'success' && response.event === 'GET_USER_LIST') {
+                    const newRoom = response.data;
+                    setRoomName(newRoom);
+                }
+            }
+            setSocket(socket);
         });
 
         // Đóng kết nối khi component unmount

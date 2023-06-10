@@ -178,14 +178,14 @@ function Home() {
                 })
             );
 
-            // socket.send(JSON.stringify({
-            //         action: "onchat",
-            //         data: {
-            //             event: "GET_USER_LIST",
-            //         }
-            //     }
-            // ));
-            // setSocket(socket);
+            socket.send(JSON.stringify({
+                    action: "onchat",
+                    data: {
+                        event: "GET_USER_LIST",
+                    }
+                }
+            ));
+            setSocket(socket);
 
 
         });
