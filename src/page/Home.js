@@ -4,7 +4,7 @@ import {MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
 import ChatList from "../components/chatApp/chatList";
 import ChatBox from "../components/chatApp/chatBox";
 import TextArea from "../components/chatApp/textArea";
-import {type} from "@testing-library/user-event/dist/type";
+import moment from "moment";
 
 function Home() {
     const [socket, setSocket] = useState(null);
@@ -129,6 +129,16 @@ function Home() {
                 console.log("gui tin nhan tu",sessionStorage.getItem('user'))
                 console.log("gui tin nhan den",selectedMess)
                 console.log("gui tin nhan voi noi dung",mes)
+                // hien tin nhan vua gui di len chatBox
+                const newChatContent = [
+                    ...chatContent,
+                    {
+                        name: sessionStorage.getItem("user"),
+                        createAt: moment(mes.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                        mes: mes,
+                    },
+                ];
+                setChatContent(newChatContent);
             }
             else{
                 const requestSendMessagePeople = {
@@ -146,12 +156,17 @@ function Home() {
                 console.log("gui tin nhan tu",sessionStorage.getItem('user'))
                 console.log("gui tin nhan den",selectedMess)
                 console.log("gui tin nhan voi noi dung",mes)
+                // hien tin nhan vua gui di len chatBox
+                const newChatContent = [
+                    ...chatContent,
+                    {
+                        name: sessionStorage.getItem("user"),
+                        createAt: moment(mes.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                        mes: mes,
+                    },
+                ];
+                setChatContent(newChatContent);
             }
-
-
-
-
-
         }
     }
 
@@ -178,19 +193,28 @@ function Home() {
                 })
             );
 
-            socket.send(JSON.stringify({
-                    action: "onchat",
-                    data: {
-                        event: "GET_USER_LIST",
-                    }
-                }
-            ));
             setSocket(socket);
-
-
         });
 
-        // Đóng kết nối khi component unmount
+        socket.addEventListener("message", (event) => {
+            const message = JSON.parse(event.data);
+            const { event: eventType, data } = message;
+
+            //hien thi tin nhan vua nhan duoc len chatBox
+            if (eventType === "SEND_CHAT") {
+                const newChatContent = {
+                    name: data.name,
+                    createAt:moment( data.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                    mes: data.mes,
+                };
+
+                setChatContent((prevChatContent) => [
+                    ...prevChatContent,
+                    newChatContent,
+                ]);
+            }
+        });
+
         return () => {
             socket.close();
         };
