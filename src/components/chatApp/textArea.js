@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaPaperPlane } from 'react-icons/fa';
 
 function TextArea({ handleSendMessageClick, selectedMess }) {
     const [message, setMessage] = useState("");
@@ -19,7 +20,7 @@ function TextArea({ handleSendMessageClick, selectedMess }) {
     return (
         <div className="text-area" style={{width: '800px', display: 'flex'}}>
       <textarea
-          style={{width: '732px'}}
+          style={{width: '732px', height: '90px'}}
           className="form-control"
           rows="1"
           placeholder="Enter your message..."
@@ -27,11 +28,13 @@ function TextArea({ handleSendMessageClick, selectedMess }) {
           onChange={handleMessageChange}
       ></textarea>
             <button
+                style={{marginLeft:'10px',height:'45px', width:'40px' }}
                 className="btn btn-primary  text-right "
                 onClick={handleSendMessage}
-                disabled={!selectedMess || !message}
-            >
-                Send
+                disabled={!selectedMess || !message}>
+                <FaPaperPlane
+                style={{fontSize: '20px',margin: '-15 px'}}/>
+
             </button>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     MDBContainer,
     MDBRow,
@@ -11,13 +11,19 @@ import {
     MDBTextArea,
     MDBCardHeader,
 } from "mdb-react-ui-kit";
-import TextArea from "./textArea";
 
 export default function ChatBox(props) {
     const { chatContent } = props;
+    const chatBoxRef = useRef(null);
 
+    useEffect(() => {
+        // tu dong cuon xuong cuoi
+        if (chatBoxRef.current) {
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+    }, [chatContent]);
     return (
-        <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}}>
+        <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
             <ul>
                 {chatContent.map((mess, index) => (
 
