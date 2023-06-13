@@ -201,7 +201,7 @@ export default function ChatList({ handleClickMess }) {
                                         <div className="d-flex flex-row">
                                             {user.type === 0 ? (
                                                 <img
-                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBba0js...usqp=CAU"
+                                                    src="https://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg"
                                                     alt="avatar"
                                                     className="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
                                                     width="50"
