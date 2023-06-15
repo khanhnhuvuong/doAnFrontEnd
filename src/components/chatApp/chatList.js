@@ -153,11 +153,12 @@ export default function ChatList({ handleClickMess, userList, selectedUser }) {
                         width="50"
                     />
                     <div className="pt-1" style={{marginTop: '5px'}}>
-                        <h4 className="fw-bold font mb-0">{sessionStorage.getItem('user')}</h4>
+                        <h4 className="fw-bold font mb-0"
+                        style={{color: '#3260ac'}}>{sessionStorage.getItem('user')}</h4>
                     </div>
                 </div>
-                <MDBBtn style={{height: '45px'}}
-                        className='mt-2 gradient-custom-3' size='lg' onClick={handleLogout}>Đăng Xuất</MDBBtn>
+                <MDBBtn style={{height: '45px', color: '#3260ac'}}
+                        className='mt-2' size='lg' onClick={handleLogout}><span style={{color: 'white'}}>Đăng Xuất</span></MDBBtn>
             </a>
             <MDBCard>
                 <MDBCardBody>
@@ -232,7 +233,8 @@ export default function ChatList({ handleClickMess, userList, selectedUser }) {
                                                 />
                                             )}
                                             <div className="pt-1">
-                                                <p className="fw-bold mt-3">{user.name}</p>
+                                                <p className="fw-bold mt-3"
+                                                style={{color: '#3260ac'}}>{user.name}</p>
                                                 <p className="small text-muted">
                                                 </p>
                                             </div>
