@@ -22,11 +22,11 @@ export default function ChatBox(props) {
             chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
         }
     }, [chatContent]);
+
     return (
         <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
             <ul>
                 {chatContent.map((mess, index) => (
-
                     <div key={index} style={{ width: '750px' }}>
                         {mess.name === sessionStorage.getItem('user') ? (
                             <li className="d-flex mb-3">
