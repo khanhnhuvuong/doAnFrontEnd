@@ -31,6 +31,7 @@ export default function ChatList({ handleClickMess, userList, selectedUser }) {
     // useEffect(() => {
     //     console.log(userList); // Đảm bảo danh sách người dùng được cập nhật
     // }, [userList]);
+
     const handleLogout = () => {
         //Gửi yêu cầu đăng ký đến server WebSocket
         const requestData = {
