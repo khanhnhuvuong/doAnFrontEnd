@@ -1,10 +1,12 @@
 import React, {useRef, useState} from "react";
-import {FaPaperPlane} from 'react-icons/fa';
 import {MDBIcon, MDBTextArea} from "mdb-react-ui-kit";
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 function TextArea({handleSendMessageClick, selectedUser}) {
     const [message, setMessage] = useState("");
     const fileInputImage = useRef();
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const handleMessageChange = (event) => {
         setMessage(event.target.value);
@@ -65,8 +67,18 @@ function TextArea({handleSendMessageClick, selectedUser}) {
             <a className="ms-1 text-muted" onClick={() => fileInputImage.current.click()}>
                 <MDBIcon fas icon="paperclip"/>
             </a>
-            <a className="ms-3 text-muted" onClick={handleClickSend}>
-                <MDBIcon fas icon="smile"/>
+            <a className="ms-3 text-muted" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                <MDBIcon fas icon="smile" onClick={() => setShowEmojiPicker(!showEmojiPicker)}/>
+                <div className="emoji-picker">
+                    {showEmojiPicker && <Picker
+                        data={data}
+
+                        onEmojiSelect={(e) => {
+                            setMessage(message + e.native);
+                            setShowEmojiPicker(!showEmojiPicker)
+                        }}
+                    />}
+                </div>
             </a>
             <a className="ms-3" onClick={handleClickSend}>
                 <MDBIcon fas icon="paper-plane"/>
