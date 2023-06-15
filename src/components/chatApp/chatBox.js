@@ -50,7 +50,7 @@ export default function ChatBox(props) {
                                     <div className="d-flex flex-row justify-content-end mb-4 pt-1">
                                         <div>
                                             <p className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
-                                                {mess.mes}
+                                                {decodeURIComponent(mess.mes)}
                                             </p>
                                         </div>
                                         <img
@@ -80,7 +80,7 @@ export default function ChatBox(props) {
                                                 className="small p-2 ms-3 mb-3 rounded-3"
                                                 style={{ backgroundColor: "#f5f6f7" }}
                                             >
-                                                {mess.mes}
+                                                {decodeURIComponent(mess.mes)}
                                             </p>
                                         </div>
                                     </div>
