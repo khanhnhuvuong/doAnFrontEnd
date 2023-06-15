@@ -23,10 +23,19 @@ export default function ChatBox(props) {
         }
     }, [chatContent]);
 
+    let sortedChatContent = [];
+    if (Array.isArray(chatContent)) {
+        sortedChatContent = [...chatContent].sort((a, b) => {
+            const timeA = new Date(a.createAt).getTime();
+            const timeB = new Date(b.createAt).getTime();
+            return timeA - timeB;
+        });
+    }
+
     return (
         <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
             <ul>
-                {chatContent.map((mess, index) => (
+                {sortedChatContent.map((mess, index) => (
                     <div key={index} style={{ width: '750px' }}>
                         {mess.name === sessionStorage.getItem('user') ? (
                             <li className="d-flex mb-3">
