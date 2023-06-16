@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 import {MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
 import ChatList from "../components/chatApp/chatList";
@@ -8,10 +8,12 @@ import moment from "moment";
 
 function Home() {
     const [socket, setSocket] = useState(null);
+    const [selectedMess, setSelectedMess] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
     const [userList, setUserList] = useState([]);
     const [chatContent, setChatContent] = useState([]);
+    const [typeUser, setType] = useState();
 
     function handleClickMess(userName, type) {
         console.log(userName);
@@ -101,47 +103,62 @@ function Home() {
     }
 
     function handleSendMessage(mes) {
-        const encodedMessage = encodeURIComponent(mes);
-        const requestSendMessageRoom = {
-            action: "onchat",
-            data: {
-                event: "SEND_CHAT",
-                data: {
-                    type: selectedType,
-                    to: selectedUser,
-                    mes: encodedMessage,
-                },
-            },
-        };
-        socket.send(JSON.stringify(requestSendMessageRoom));
-        console.log("gui tin nhan tu", sessionStorage.getItem('user'))
-        console.log("gui tin nhan den", selectedUser)
-        console.log("gui tin nhan voi noi dung", mes)
-        if (selectedType == 'people') {
-            const requestRoomChatMessage = {
-                action: "onchat",
-                data: {
-                    event: "GET_PEOPLE_CHAT_MES",
+
+        if (selectedUser) {
+            if(typeUser === 1){
+                const requestSendMessageRoom = {
+                    action: "onchat",
                     data: {
-                        name: selectedUser,
-                        page: 1,
+                        event: "SEND_CHAT",
+                        data: {
+                            type: "room",
+                            to: selectedUser,
+                            mes: mes,
+                        },
                     },
-                },
-            };
-            socket.send(JSON.stringify(requestRoomChatMessage));
-        }
-        if (selectedType == 'room') {
-            const requestRoomChatMessage = {
-                action: "onchat",
-                data: {
-                    event: "GET_ROOM_CHAT_MES",
+                };
+                socket.send(JSON.stringify(requestSendMessageRoom));
+                console.log("gui tin nhan tu",sessionStorage.getItem('user'))
+                console.log("gui tin nhan den",selectedUser)
+                console.log("gui tin nhan voi noi dung",mes)
+                // hien tin nhan vua gui di len chatBox
+                const newChatContent = [
+                    ...chatContent,
+                    {
+                        name: sessionStorage.getItem("user"),
+                        createAt: moment(mes.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                        mes: mes,
+                    },
+                ];
+                setChatContent(newChatContent);
+            }
+            else{
+                const requestSendMessagePeople = {
+                    action: "onchat",
                     data: {
-                        name: selectedUser,
-                        page: 1,
+                        event: "SEND_CHAT",
+                        data: {
+                            type: "people",
+                            to: selectedUser,
+                            mes: mes,
+                        },
                     },
-                },
-            };
-            socket.send(JSON.stringify(requestRoomChatMessage));
+                };
+                socket.send(JSON.stringify(requestSendMessagePeople));
+                console.log("gui tin nhan tu",sessionStorage.getItem('user'))
+                console.log("gui tin nhan den",selectedUser)
+                console.log("gui tin nhan voi noi dung",mes)
+                // hien tin nhan vua gui di len chatBox
+                const newChatContent = [
+                    ...chatContent,
+                    {
+                        name: sessionStorage.getItem("user"),
+                        createAt: moment(mes.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                        mes: mes,
+                    },
+                ];
+                setChatContent(newChatContent);
+            }
         }
     }
 
@@ -184,14 +201,6 @@ function Home() {
                     const chatContent = response.data;
                     setChatContent(chatContent);
                 }
-                if (response.status === 'success' && response.event === 'SEND_CHAT') {
-                    const newMessage = response.data.chatData;
-                    setChatContent((prevChatContent) => [...prevChatContent, newMessage]);
-                }
-                if (response.status === 'success' && response.event === 'SEND_CHAT') {
-                    const newMessage = response.data;
-                    setChatContent((prevChatContent) => [...prevChatContent, newMessage]);
-                }
                 if (response.status === "success" && response.event === "GET_USER_LIST") {
                     const newUserList = response.data;
                     setUserList(newUserList);
@@ -203,13 +212,13 @@ function Home() {
 
         socket.addEventListener("message", (event) => {
             const message = JSON.parse(event.data);
-            const {event: eventType, data} = message;
+            const { event: eventType, data } = message;
 
             //hien thi tin nhan vua nhan duoc len chatBox
             if (eventType === "SEND_CHAT") {
                 const newChatContent = {
                     name: data.name,
-                    createAt: moment(data.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                    createAt:moment( data.createAt).format('YYYY-MM-DD HH:mm:ss'),
                     mes: data.mes,
                 };
 
@@ -227,13 +236,13 @@ function Home() {
 
 
     return (
-        <MDBContainer fluid className="py-2 gradient-custom" style={{backgroundColor: "#eee"}}>
+        <MDBContainer fluid className="py-2 gradient-custom" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
                 <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser}/>
                 {selectedUser && (
                     <MDBCol md="6" lg="7" xl="8">
                         <ChatBox chatContent={chatContent} selectedUser={selectedUser}/>
-                        <TextArea selectedUser={selectedUser} handleSendMessage={handleSendMessage}/>
+                        <TextArea selectedUser={selectedUser} handleSendMessageClick={handleSendMessage}  />
                     </MDBCol>
                 )}
             </MDBRow>

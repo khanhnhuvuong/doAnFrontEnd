@@ -33,7 +33,7 @@ export default function ChatBox(props) {
     }
 
     return (
-        <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
+        <MDBTypography listUnStyled style={{height:"432px", width: "900px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
             <ul>
                 {sortedChatContent.map((mess, index) => (
                     <div key={index} style={{ width: '750px' }}>
@@ -50,7 +50,7 @@ export default function ChatBox(props) {
                                     <div className="d-flex flex-row justify-content-end mb-4 pt-1">
                                         <div>
                                             <p className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
-                                                {decodeURIComponent(mess.mes)}
+                                                {mess.mes}
                                             </p>
                                         </div>
                                         <img
@@ -80,7 +80,7 @@ export default function ChatBox(props) {
                                                 className="small p-2 ms-3 mb-3 rounded-3"
                                                 style={{ backgroundColor: "#f5f6f7" }}
                                             >
-                                                {decodeURIComponent(mess.mes)}
+                                                {mess.mes}
                                             </p>
                                         </div>
                                     </div>

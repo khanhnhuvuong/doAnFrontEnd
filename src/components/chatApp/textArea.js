@@ -1,59 +1,35 @@
 import React, {useRef, useState} from "react";
-import './chatApp.css';
-import { Picker } from 'emoji-mart';
-// import 'emoji-mart/css/emoji-mart.css';
+import {MDBIcon, MDBTextArea} from "mdb-react-ui-kit";
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
-import {
-    MDBTextArea,
-    MDBBtn, MDBCardBody, MDBIcon,
-} from "mdb-react-ui-kit";
-export default function TextArea({handleSendMessage}) {
-    const [mess, setMess] = useState('');
+function TextArea({handleSendMessageClick, selectedUser}) {
+    const [message, setMessage] = useState("");
     const fileInputImage = useRef();
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [selectedEmoji, setSelectedEmoji] = useState('');
-    const [selectedEmojis, setSelectedEmojis] = useState([]);
-    const emojiList = [
-        "😊", "😄", "😃", "😉", "😍", "🥰", "😘", "😎", "😜", "😂", "🤣", "😇", "😴", "🤫", "🙄", "😷", "🤔",
-        "🙂", "🙃", "😋", "😚", "😐", "😑", "😮", "😯", "😪", "😫", "😴", "😝", "😛", "🤪", "🤨", "😕", "😟",
-        "🙁", "😤", "😠", "😡", "🤬", "😓", "🤥", "🤢", "🤮", "🤧", "🥵", "🥶", "😱", "😨", "😰", "😥", "😭",
-        "😢", "😓", "😤", "😩", "🤯", "😳", "🥴", "😬", "🤭", "🤫", "🤔", "🤐", "🙄", "😷", "🤒", "🤕", "🤑",
-        "🤠", "😇", "🥳", "🥺", "🤡", "🤓", "😎", "🤖", "👽", "👾", "🤡", "💩", "👻", "💀", "👺", "👹", "👿"
-    ];
 
+    const handleMessageChange = (event) => {
+        setMessage(event.target.value);
+    };
+
+    const handleSendMessage = () => {
+        handleSendMessageClick(message);
+    };
+
+    if (!selectedUser) {
+        return null; // Ẩn trang TextArea khi không có selectedMess
+    }
 
     function handleClickSend() {
-        if (mess !== '') {
-            handleSendMessage(mess);
-            setMess('');
+        if (message !== '') {
+            handleSendMessage(message);
+            setMessage('');
         }
     }
-
-    function handleSendIcon() {
-        if (selectedEmojis.length > 0) {
-            handleSendMessage(selectedEmojis.join(''));
-            setSelectedEmojis([]);
-            setShowEmojiPicker(false);
-        }
-    }
-
-    function handleRemoveIcon(emoji) {
-        setSelectedEmojis(selectedEmojis.filter((item) => item !== emoji));
-    }
-
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             handleClickSend();
-            handleSendIcon();
-        }
-    }
-
-    function handleKeyDown(e) {
-        if (e.key === 'Backspace' && selectedEmojis.length > 0) {
-            const updatedEmojis = [...selectedEmojis];
-            updatedEmojis.pop(); // Xóa biểu tượng cuối cùng
-            setSelectedEmojis(updatedEmojis);
         }
     }
 
@@ -66,63 +42,49 @@ export default function TextArea({handleSendMessage}) {
 
             handleSendMessage(base64Image);
 
-            setMess(base64Image); // Cập nhật giá trị của mess sau khi gửi tin nhắn
+            setMessage(""); // Cập nhật giá trị của mess sau khi gửi tin nhắn
         };
         reader.readAsDataURL(file);
     }
 
     return (
-        <div style={{width: '800px', display: 'flex'}}>
-            <input
-                style={{ width: "800px", height: '40px'}}
-                label="Message"
-                id="textAreaExample"
-                value={selectedEmojis.length > 0 ? `${mess}${selectedEmojis.join('')}` : mess}
-                onChange={(e) => setMess(e.target.value)}
+        <div style={{width: '732px', display: 'flex'}}>
+            <MDBTextArea
+                style={{width: '732px'}}
+                className="form-control"
+                rows="1"
+                placeholder="Nhập tin nhắn tại đây..."
+                value={message}
+                onChange={handleMessageChange}
                 onKeyPress={handleKeyPress}
-                onKeyDown={handleKeyDown}
-            />
-
+            ></MDBTextArea>
             <input
                 type="file"
                 style={{display: "none"}}
                 ref={fileInputImage}
                 onChange={handleUploadImage}
             />
-            <a className="ms-3 text-muted"
-               style={{marginTop: '5px'}}
-               onClick={() => fileInputImage.current.click()}>
+            <a className="ms-1 text-muted" onClick={() => fileInputImage.current.click()}>
                 <MDBIcon fas icon="paperclip"/>
             </a>
-            <a className="ms-3 text-muted"
-               style={{marginTop: '5px'}}
-               onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-                <MDBIcon fas icon="smile"/>
+            <a className="ms-3 text-muted" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                <MDBIcon fas icon="smile" onClick={() => setShowEmojiPicker(!showEmojiPicker)}/>
+                <div className="emoji-picker">
+                    {showEmojiPicker && <Picker
+                        data={data}
+
+                        onEmojiSelect={(e) => {
+                            setMessage(message + e.native);
+                            setShowEmojiPicker(!showEmojiPicker)
+                        }}
+                    />}
+                </div>
             </a>
-            <a className="ms-3" onClick={handleSendIcon}
-               style={{marginTop: '5px', color: '#3b71ca'}}>
+            <a className="ms-3" onClick={handleClickSend}>
                 <MDBIcon fas icon="paper-plane"/>
             </a>
-            {showEmojiPicker && (
-                <div className="emoji-picker">
-                    {emojiList.map((emoji, index) => (
-                        <span
-                            style={{cursor: 'pointer'}}
-                            key={index}
-                            className={`emoji ${selectedEmoji === emoji ? "selected" : ""}`}
-                            onClick={() => {
-                                if (selectedEmojis.includes(emoji)) {
-                                    setSelectedEmojis(selectedEmojis.filter((item) => item !== emoji));
-                                } else {
-                                    setSelectedEmojis([...selectedEmojis, emoji]);
-                                }
-                            }}
-                        >
-                    {emoji}
-                        </span>
-                    ))}
-                </div>
-            )}
         </div>
     );
 }
+
+export default TextArea;
