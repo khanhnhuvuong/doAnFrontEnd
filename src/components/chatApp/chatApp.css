@@ -23,13 +23,14 @@
 }
 
 .emoji-picker {
+    border-radius: 5px;
+    background-color: aliceblue;
     position: absolute;
     margin-top: 5px;
-    top: 32%;
-    left: 880px;
+    top: 33%;
+    left: 950px;
     width: 250px;
     height: auto;
-    background-color: white;
     border: 1px solid gray;
     padding: 10px;
     z-index: 999;

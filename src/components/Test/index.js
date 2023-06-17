@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 
 const UserList = () => {
     const [userList, setUserList] = useState([]);
@@ -6,6 +7,7 @@ const UserList = () => {
     const [pass, setPass] = useState("");
     const [socket, setSocket] = useState(null);
     const [mess, setMess] = useState('');
+    const apiKey = '645f9baa9ada4f18c05d90c2526108a7';
 
     // Gọi hàm API hoặc WebSocket để lấy danh sách người dùng
     useEffect(() => {
@@ -16,6 +18,24 @@ const UserList = () => {
             setSocket(newSocket);
         });
 
+        const getLinkPreview = async (url) => {
+            try {
+                const response = await axios.get(`https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(url)}`);
+                return response.data;
+            } catch (error) {
+                console.error('Error fetching link preview:', error);
+                return null;
+            }
+        };
+
+// Sử dụng hàm getLinkPreview để kiểm tra thông tin trả về của link
+        const testLinkPreview = async () => {
+            const url = 'https://www.youtube.com/';
+            const preview = await getLinkPreview(url);
+            console.log('Web Preview:', preview);
+        };
+
+        testLinkPreview();
         return () => {
             // Đóng kết nối WebSocket khi component bị hủy
             newSocket.close();
@@ -71,11 +91,11 @@ const UserList = () => {
             <h2>User List</h2>
             <ul>
                 {userList.map((user, index) => (
-                    <li key={index}>
-                        {user.name}<br/>
-                        {user.mes}<br/>
-                    </li>
-                )
+                        <li key={index}>
+                            {user.name}<br/>
+                            {user.mes}<br/>
+                        </li>
+                    )
                 )}
             </ul>
             <input

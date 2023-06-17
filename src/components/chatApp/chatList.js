@@ -176,38 +176,6 @@ export default function ChatList({ handleClickMess, userList, selectedUser }) {
                             Thêm
                         </button>
 
-                        <MDBInput
-                            label="Tìm kiếm tin nhắn"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-
-                        {searchResults.map((result, index) => (
-                            <li key={index}>{result.name}</li>
-                        ))}
-
-                        <MDBBtn onClick={handleSearch}>Tìm kiếm</MDBBtn>
-
-                        {/*<MDBInput*/}
-                        {/*    label="Tìm kiếm tin nhắn"*/}
-                        {/*    value={searchQuery}*/}
-                        {/*    onChange={(e) => {*/}
-                        {/*        setSearchQuery(e.target.value);*/}
-                        {/*        handleSearch();*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-
-                        <div className="form-check align-content-end">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                value=""
-                                id="flexCheckDefault"
-                                checked={isChecked}
-                                onChange={handleCheckboxChange} // Thêm sự kiện onChange cho checkbox
-                            />
-                            <label className="form-check-label" htmlFor="flexCheckDefault">Room</label>
-                        </div>
                     </div>
                     <MDBTypography listUnStyled className="mb-0" style={{height: "415px", overflow: "scroll"}}>
                         <ul className="list-group list-group-light list-group-small">
