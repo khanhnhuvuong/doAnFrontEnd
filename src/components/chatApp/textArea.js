@@ -3,18 +3,25 @@ import {MDBIcon, MDBTextArea} from "mdb-react-ui-kit";
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 
-function TextArea({handleSendMessageClick, selectedUser}) {
+function TextArea({handleSendMessage, selectedUser}) {
     const [message, setMessage] = useState("");
     const fileInputImage = useRef();
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [selectedEmoji, setSelectedEmoji] = useState('');
+    const [selectedEmojis, setSelectedEmojis] = useState([]);
+    const emojiList = [
+        "😊", "😄", "😃", "😉", "😍", "🥰", "😘", "😎", "😜", "😂", "🤣", "😇", "😴", "🤫", "🙄", "😷", "🤔",
+        "🙂", "🙃", "😋", "😚", "😐", "😑", "😮", "😯", "😪", "😫", "😴", "😝", "😛", "🤪", "🤨", "😕", "😟",
+        "🙁", "😤", "😠", "😡", "🤬", "😓", "🤥", "🤢", "🤮", "🤧", "🥵", "🥶", "😱", "😨", "😰", "😥", "😭",
+        "😢", "😓", "😤"];
 
     const handleMessageChange = (event) => {
         setMessage(event.target.value);
     };
 
-    const handleSendMessage = () => {
-        handleSendMessageClick(message);
-    };
+    // const handleSendMessage = () => {
+    //     handleSendMessage(message);
+    // };
 
     if (!selectedUser) {
         return null; // Ẩn trang TextArea khi không có selectedMess
@@ -26,6 +33,13 @@ function TextArea({handleSendMessageClick, selectedUser}) {
             setMessage('');
         }
     }
+        function handleSendIcon() {
+            if (selectedEmojis.length > 0) {
+                handleSendMessage(selectedEmojis.join(''));
+                setSelectedEmojis([]);
+                setShowEmojiPicker(false);
+            }
+        }
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
@@ -47,42 +61,58 @@ function TextArea({handleSendMessageClick, selectedUser}) {
         reader.readAsDataURL(file);
     }
 
+
     return (
         <div style={{width: '732px', display: 'flex'}}>
-            <MDBTextArea
-                style={{width: '732px'}}
-                className="form-control"
-                rows="1"
-                placeholder="Nhập tin nhắn tại đây..."
-                value={message}
-                onChange={handleMessageChange}
+            <input
+                style={{ width: "800px", height: '40px'}}
+                label="Message"
+                id="textAreaExample"
+                value={selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message}
+                onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-            ></MDBTextArea>
+
+            />
             <input
                 type="file"
                 style={{display: "none"}}
                 ref={fileInputImage}
                 onChange={handleUploadImage}
             />
-            <a className="ms-1 text-muted" onClick={() => fileInputImage.current.click()}>
+            <a className="ms-3 text-muted"
+               style={{marginTop: '5px'}}
+               onClick={() => fileInputImage.current.click()}>
                 <MDBIcon fas icon="paperclip"/>
             </a>
-            <a className="ms-3 text-muted" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-                <MDBIcon fas icon="smile" onClick={() => setShowEmojiPicker(!showEmojiPicker)}/>
-                <div className="emoji-picker">
-                    {showEmojiPicker && <Picker
-                        data={data}
-
-                        onEmojiSelect={(e) => {
-                            setMessage(message + e.native);
-                            setShowEmojiPicker(!showEmojiPicker)
-                        }}
-                    />}
-                </div>
+            <a className="ms-3 text-muted"
+               style={{marginTop: '5px'}}
+               onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                <MDBIcon fas icon="smile"/>
             </a>
-            <a className="ms-3" onClick={handleClickSend}>
+            <a className="ms-3" onClick={handleSendIcon}
+               style={{marginTop: '5px', color: '#3b71ca'}}>
                 <MDBIcon fas icon="paper-plane"/>
             </a>
+            {showEmojiPicker && (
+                <div className="emoji-picker">
+                    {emojiList.map((emoji, index) => (
+                        <span
+                            style={{cursor: 'pointer'}}
+                            key={index}
+                            className={`emoji ${selectedEmoji ===emoji ? "selected" : ""}`}
+                            onClick={() => {
+                                if (selectedEmojis.includes(emoji)) {
+                                    setSelectedEmojis(selectedEmojis.filter((item) => item !== emoji));
+                                } else {
+                                    setSelectedEmojis([...selectedEmojis, emoji]);
+                                }
+                            }}
+                        >
+                    {emoji}
+                            </span>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

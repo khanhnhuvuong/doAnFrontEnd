@@ -103,62 +103,47 @@ function Home() {
     }
 
     function handleSendMessage(mes) {
-
-        if (selectedUser) {
-            if(typeUser === 1){
-                const requestSendMessageRoom = {
-                    action: "onchat",
+        const encodedMessage = encodeURIComponent(mes);
+        const requestSendMessageRoom = {
+            action: "onchat",
+            data: {
+                event: "SEND_CHAT",
+                data: {
+                    type: selectedType,
+                    to: selectedUser,
+                    mes: encodedMessage,
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestSendMessageRoom));
+        console.log("gui tin nhan tu", sessionStorage.getItem('user'))
+        console.log("gui tin nhan den", selectedUser)
+        console.log("gui tin nhan voi noi dung", mes)
+        if (selectedType == 'people') {
+            const requestRoomChatMessage = {
+                action: "onchat",
+                data: {
+                    event: "GET_PEOPLE_CHAT_MES",
                     data: {
-                        event: "SEND_CHAT",
-                        data: {
-                            type: "room",
-                            to: selectedUser,
-                            mes: mes,
-                        },
+                        name: selectedUser,
+                        page: 1,
                     },
-                };
-                socket.send(JSON.stringify(requestSendMessageRoom));
-                console.log("gui tin nhan tu",sessionStorage.getItem('user'))
-                console.log("gui tin nhan den",selectedUser)
-                console.log("gui tin nhan voi noi dung",mes)
-                // hien tin nhan vua gui di len chatBox
-                const newChatContent = [
-                    ...chatContent,
-                    {
-                        name: sessionStorage.getItem("user"),
-                        createAt: moment(mes.createAt).format('YYYY-MM-DD HH:mm:ss'),
-                        mes: mes,
-                    },
-                ];
-                setChatContent(newChatContent);
-            }
-            else{
-                const requestSendMessagePeople = {
-                    action: "onchat",
+                },
+            };
+            socket.send(JSON.stringify(requestRoomChatMessage));
+        }
+        if (selectedType == 'room') {
+            const requestRoomChatMessage = {
+                action: "onchat",
+                data: {
+                    event: "GET_ROOM_CHAT_MES",
                     data: {
-                        event: "SEND_CHAT",
-                        data: {
-                            type: "people",
-                            to: selectedUser,
-                            mes: mes,
-                        },
+                        name: selectedUser,
+                        page: 1,
                     },
-                };
-                socket.send(JSON.stringify(requestSendMessagePeople));
-                console.log("gui tin nhan tu",sessionStorage.getItem('user'))
-                console.log("gui tin nhan den",selectedUser)
-                console.log("gui tin nhan voi noi dung",mes)
-                // hien tin nhan vua gui di len chatBox
-                const newChatContent = [
-                    ...chatContent,
-                    {
-                        name: sessionStorage.getItem("user"),
-                        createAt: moment(mes.createAt).format('YYYY-MM-DD HH:mm:ss'),
-                        mes: mes,
-                    },
-                ];
-                setChatContent(newChatContent);
-            }
+                },
+            };
+            socket.send(JSON.stringify(requestRoomChatMessage));
         }
     }
 
@@ -242,7 +227,7 @@ function Home() {
                 {selectedUser && (
                     <MDBCol md="6" lg="7" xl="8">
                         <ChatBox chatContent={chatContent} selectedUser={selectedUser}/>
-                        <TextArea selectedUser={selectedUser} handleSendMessageClick={handleSendMessage}  />
+                        <TextArea selectedUser={selectedUser} handleSendMessage={handleSendMessage}  />
                     </MDBCol>
                 )}
             </MDBRow>

@@ -21,14 +21,30 @@
 .cardclick {
     cursor: pointer;
 }
-
 .emoji-picker {
     position: absolute;
-    top: 17%;
-    left: 852px;
+    margin-top: 5px;
+    top: 32%;
+    left: 880px;
+    width: 250px;
+    height: auto;
+    background-color: white;
+    border: 1px solid gray;
     padding: 10px;
     z-index: 999;
 }
+
+.emoji-picker .emoji {
+    margin: 5px;
+}
+
+/*.emoji-picker {*/
+/*    position: absolute;*/
+/*    top: 17%;*/
+/*    left: 852px;*/
+/*    padding: 10px;*/
+/*    z-index: 999;*/
+/*}*/
 /*.mask-custom {*/
 /*    background: rgba(24, 24, 16, 0.2);*/
 /*    border-radius: 2em;*/
