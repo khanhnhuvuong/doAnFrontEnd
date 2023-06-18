@@ -146,7 +146,7 @@ function Home() {
             previewLink();
         }
 
-        if (selectedType == 'people') {
+        if (selectedType === 'people') {
             const requestRoomChatMessage = {
                 action: "onchat",
                 data: {
@@ -159,7 +159,7 @@ function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMessage));
         }
-        if (selectedType == 'room') {
+        if (selectedType === 'room') {
             const requestRoomChatMessage = {
                 action: "onchat",
                 data: {
