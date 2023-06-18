@@ -10,11 +10,16 @@ import {
     MDBTypography,
     MDBTextArea,
     MDBCardHeader,
+    MDBCardImage, MDBCardText, MDBCardTitle,
 } from "mdb-react-ui-kit";
-
-export default function ChatBox(props) {
-    const { chatContent } = props;
+import Linkify from 'react-linkify';
+export default function ChatBox({chatContent, webPreview}) {
     const chatBoxRef = useRef(null);
+    const isImage = (str) => {
+        return str.includes('images');
+    };
+
+
 
     useEffect(() => {
         // tu dong cuon xuong cuoi
@@ -33,10 +38,10 @@ export default function ChatBox(props) {
     }
 
     return (
-        <MDBTypography listUnStyled style={{height:"432px", width: "900px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
+        <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
             <ul>
                 {sortedChatContent.map((mess, index) => (
-                    <div key={index} style={{ width: '750px' }}>
+                    <div key={index} style={{width: '750px'}}>
                         {mess.name === sessionStorage.getItem('user') ? (
                             <li className="d-flex mb-3">
                                 <MDBCardBody className="p-0 m-lg-1">
@@ -49,14 +54,44 @@ export default function ChatBox(props) {
                                     </div>
                                     <div className="d-flex flex-row justify-content-end mb-4 pt-1">
                                         <div>
-                                            <p className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
-                                                {decodeURIComponent(mess.mes)}
-                                            </p>
+                                            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+                                                <a href={decoratedHref} target="_blank" rel="noopener noreferrer"
+                                                   key={key}>
+                                                    <span
+                                                        className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
+                                                        {decodeURIComponent(mess.mes)}
+                                                    </span>
+                                                    {webPreview && (
+                                                        <MDBCard style={{width: '350px', height: '250px'}}>
+                                                            <MDBCardImage src={webPreview.image} position='top'
+                                                                          alt='...' style={{
+                                                                width: '100px',
+                                                                height: '100px',
+                                                                margin: 'auto'
+                                                            }}/>
+                                                            <MDBCardBody>
+                                                                <MDBCardTitle>{webPreview.title}</MDBCardTitle>
+                                                                <MDBCardText>
+                                                                    {webPreview.description}                                                                </MDBCardText>
+                                                                <a>{webPreview.link}</a>
+                                                            </MDBCardBody>
+                                                        </MDBCard>
+                                                    )}
+                                                </a>
+                                            )}>
+                                                <p className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
+                                                    {isImage(decodeURIComponent(mess.mes)) ?
+                                                        (<MDBCardImage
+                                                            style={{width: '350px', height: 'auto'}}
+                                                            src={decodeURIComponent(mess.mes)}></MDBCardImage>) : (decodeURIComponent(mess.mes))
+                                                    }
+                                                </p>
+                                            </Linkify>
                                         </div>
                                         <img
                                             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
                                             alt="avatar 1"
-                                            style={{ width: "45px", height: "100%" }}
+                                            style={{width: "45px", height: "100%"}}
                                         />
                                     </div>
                                 </MDBCardBody>
@@ -73,16 +108,45 @@ export default function ChatBox(props) {
                                         <img
                                             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
                                             alt="avatar 1"
-                                            style={{ width: "45px", height: "100%" }}
+                                            style={{width: "45px", height: "100%"}}
                                         />
                                         <div>
-                                            <p
-                                                className="small p-2 ms-3 mb-3 rounded-3"
-                                                style={{ backgroundColor: "#f5f6f7" }}
-                                            >
-                                                {decodeURIComponent(mess.mes)}
-                                            </p>
+                                            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+                                                <a href={decoratedHref} target="_blank" rel="noopener noreferrer"
+                                                   key={key}>
+                            <span className="small p-2 ms-3 mb-3 rounded-3" style={{backgroundColor: "#f5f6f7"}}>
+                        {decodeURIComponent(mess.mes)}
+                            </span>
+                                                    {webPreview && (
+                                                        <MDBCard style={{width: '350px', height: '250px'}}>
+                                                            <MDBCardImage src={webPreview.image} position='top'
+                                                                          alt='...' style={{
+                                                                width: '100px',
+                                                                height: '100px',
+                                                                margin: 'auto'
+                                                            }}/>
+                                                            <MDBCardBody>
+                                                                <MDBCardTitle>{webPreview.title}</MDBCardTitle>
+                                                                <MDBCardText>
+                                                                    {webPreview.description}                                                                </MDBCardText>
+                                                                <a>{webPreview.link}</a>
+                                                            </MDBCardBody>
+                                                        </MDBCard>
+                                                    )}
+                                                </a>
+                                            )}>
+                                                <p className="small p-2 ms-3 mb-3 rounded-3"
+                                                   style={{backgroundColor: "#f5f6f7"}}>
+                                                    {isImage(decodeURIComponent(mess.mes)) ?
+                                                        (<MDBCardImage
+                                                            style={{width: '350px', height: 'auto'}}
+                                                            src={decodeURIComponent(mess.mes)}></MDBCardImage>) : (decodeURIComponent(mess.mes))
+                                                    }
+                                                </p>
+                                            </Linkify>
+
                                         </div>
+
                                     </div>
                                 </MDBCardBody>
                             </li>

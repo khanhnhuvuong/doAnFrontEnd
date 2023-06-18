@@ -1,7 +1,8 @@
 import React, {useRef, useState} from "react";
 import {MDBIcon, MDBTextArea} from "mdb-react-ui-kit";
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
+import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
+import {initializeApp} from "firebase/app";
+
 
 function TextArea({handleSendMessage, selectedUser}) {
     const [message, setMessage] = useState("");
@@ -13,15 +14,22 @@ function TextArea({handleSendMessage, selectedUser}) {
         "😊", "😄", "😃", "😉", "😍", "🥰", "😘", "😎", "😜", "😂", "🤣", "😇", "😴", "🤫", "🙄", "😷", "🤔",
         "🙂", "🙃", "😋", "😚", "😐", "😑", "😮", "😯", "😪", "😫", "😴", "😝", "😛", "🤪", "🤨", "😕", "😟",
         "🙁", "😤", "😠", "😡", "🤬", "😓", "🤥", "🤢", "🤮", "🤧", "🥵", "🥶", "😱", "😨", "😰", "😥", "😭",
-        "😢", "😓", "😤"];
-
-    const handleMessageChange = (event) => {
-        setMessage(event.target.value);
+        "😢", "😓", "😤", "😩", "🤯", "😳", "🥴", "😬", "🤭", "🤫", "🤔", "🤐", "🙄", "😷", "🤒", "🤕", "🤑",
+        "🤠", "😇", "🥳", "🥺", "🤡", "🤓", "😎", "🤖", "👽", "👾", "🤡", "💩", "👻", "💀", "👺", "👹", "👿"
+    ];
+    const [imagePreview, setImagePreview] = useState(null);
+    const firebaseConfig = {
+        apiKey: "AIzaSyCaOLY5fIOYCW2NBSZkkaY9Dt3QJhp7J8Y",
+        authDomain: "appchat-efb9e.firebaseapp.com",
+        projectId: "appchat-efb9e",
+        storageBucket: "appchat-efb9e.appspot.com",
+        messagingSenderId: "809554332860",
+        appId: "1:809554332860:web:667caf7cfd4c41021d94b9"
     };
 
-    // const handleSendMessage = () => {
-    //     handleSendMessage(message);
-    // };
+    //Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
 
     if (!selectedUser) {
         return null; // Ẩn trang TextArea khi không có selectedMess
@@ -29,49 +37,75 @@ function TextArea({handleSendMessage, selectedUser}) {
 
     function handleClickSend() {
         if (message !== '') {
-            handleSendMessage(message);
+            const messageWithEmojis = selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message;
+            handleSendMessage(messageWithEmojis);
             setMessage('');
+            setSelectedEmojis([]);
         }
     }
-        function handleSendIcon() {
-            if (selectedEmojis.length > 0) {
-                handleSendMessage(selectedEmojis.join(''));
-                setSelectedEmojis([]);
-                setShowEmojiPicker(false);
-            }
+
+    function handleSendIcon() {
+        if (selectedEmojis.length > 0) {
+            handleSendMessage(selectedEmojis.join(''));
+            setSelectedEmojis([]);
+            setShowEmojiPicker(false);
         }
+    }
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             handleClickSend();
+            handleSendIcon();
+        }
+    }
+
+    function handleKeyDown(e) {
+        if (e.key === 'Backspace' && selectedEmojis.length > 0) {
+            const updatedEmojis = [...selectedEmojis];
+            updatedEmojis.pop(); // Xóa biểu tượng cuối cùng
+            setSelectedEmojis(updatedEmojis);
         }
     }
 
     function handleUploadImage(img) {
         const file = img.target.files[0];
-        const reader = new FileReader();
+        const storage = getStorage();
+        const storageRef = ref(storage, "images/" + file.name); // Sử dụng child() để tạo thư mục con
 
-        reader.onload = function (e) {
-            const base64Image = e.target.result;
+        uploadBytes(storageRef, file)
+            .then((snapshot) => {
+                console.log("Upload complete");
+                // Lấy đường dẫn tải xuống
+                return getDownloadURL(snapshot.ref);
 
-            handleSendMessage(base64Image);
+            })
+            .then((downloadURL) => {
+                // Handle việc hiển thị hình ảnh trong chatBox
+                console.log("Download URL:", downloadURL);
 
-            setMessage(""); // Cập nhật giá trị của mess sau khi gửi tin nhắn
-        };
-        reader.readAsDataURL(file);
+                // Gửi đường dẫn tải xuống đến hàm handleSendMessage để hiển thị trong chatBox
+                handleSendMessage(downloadURL);
+                setImagePreview(downloadURL); // Hiển thị hình ảnh đã tải lên
+
+                // Cập nhật giá trị của mess (nếu cần)
+                // setMess(downloadURL);
+            })
+            .catch((error) => {
+                console.error("Upload error:", error);
+                // Xử lý lỗi nếu cần
+            });
     }
 
-
     return (
-        <div style={{width: '732px', display: 'flex'}}>
+        <div style={{width: '800px', display: 'flex'}}>
             <input
-                style={{ width: "800px", height: '40px'}}
+                style={{width: "800px", height: '40px'}}
                 label="Message"
                 id="textAreaExample"
                 value={selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-
+                onKeyDown={handleKeyDown}
             />
             <input
                 type="file"
@@ -89,7 +123,7 @@ function TextArea({handleSendMessage, selectedUser}) {
                onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                 <MDBIcon fas icon="smile"/>
             </a>
-            <a className="ms-3" onClick={handleSendIcon}
+            <a className="ms-3" onClick={handleClickSend}
                style={{marginTop: '5px', color: '#3b71ca'}}>
                 <MDBIcon fas icon="paper-plane"/>
             </a>
@@ -99,7 +133,7 @@ function TextArea({handleSendMessage, selectedUser}) {
                         <span
                             style={{cursor: 'pointer'}}
                             key={index}
-                            className={`emoji ${selectedEmoji ===emoji ? "selected" : ""}`}
+                            className={`emoji ${selectedEmoji === emoji ? "selected" : ""}`}
                             onClick={() => {
                                 if (selectedEmojis.includes(emoji)) {
                                     setSelectedEmojis(selectedEmojis.filter((item) => item !== emoji));
@@ -109,7 +143,7 @@ function TextArea({handleSendMessage, selectedUser}) {
                             }}
                         >
                     {emoji}
-                            </span>
+                        </span>
                     ))}
                 </div>
             )}

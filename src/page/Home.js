@@ -5,15 +5,21 @@ import ChatList from "../components/chatApp/chatList";
 import ChatBox from "../components/chatApp/chatBox";
 import TextArea from "../components/chatApp/textArea";
 import moment from "moment";
+import axios from "axios";
+
 
 function Home() {
     const [socket, setSocket] = useState(null);
-    const [selectedMess, setSelectedMess] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
     const [userList, setUserList] = useState([]);
     const [chatContent, setChatContent] = useState([]);
-    const [typeUser, setType] = useState();
+    const apiKey = '645f9baa9ada4f18c05d90c2526108a7';
+    const [webPreview, setWebPreview] = useState(null);
+    const isURL = (text) => {
+        const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+        return urlPattern.test(text);
+    };
 
     function handleClickMess(userName, type) {
         console.log(userName);
@@ -119,6 +125,27 @@ function Home() {
         console.log("gui tin nhan tu", sessionStorage.getItem('user'))
         console.log("gui tin nhan den", selectedUser)
         console.log("gui tin nhan voi noi dung", mes)
+
+        if (isURL(mes)) {
+            // Gửi yêu cầu để lấy thông tin từ linkpreview.net
+            const getLinkPreview = async (url) => {
+                try {
+                    const response = await axios.get(`https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(url)}`);
+                    return response.data;
+                } catch (error) {
+                    console.error('Error fetching link preview:', error);
+                    return null;
+                }
+            };
+
+            const previewLink = async () => {
+                const preview = await getLinkPreview(mes);
+                console.log('Web Preview:', preview);
+                setWebPreview(preview);
+            };
+            previewLink();
+        }
+
         if (selectedType == 'people') {
             const requestRoomChatMessage = {
                 action: "onchat",
@@ -226,7 +253,7 @@ function Home() {
                 <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser}/>
                 {selectedUser && (
                     <MDBCol md="6" lg="7" xl="8">
-                        <ChatBox chatContent={chatContent} selectedUser={selectedUser}/>
+                        <ChatBox chatContent={chatContent} selectedUser={selectedUser} webPreview={webPreview} setWebPreview={setWebPreview}/>
                         <TextArea selectedUser={selectedUser} handleSendMessage={handleSendMessage}  />
                     </MDBCol>
                 )}
