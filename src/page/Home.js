@@ -23,7 +23,7 @@ function Home() {
 
     function handleClickMess(userName, type) {
         console.log(userName);
-        if (type == 1) {
+        if (type === 1) {
             setSelectedUser(userName);
             setSelectedType('room');
             const requestRelogin = {
@@ -95,7 +95,7 @@ function Home() {
             socket.onmessage = (event) => {
                 const response = JSON.parse(event.data);
                 if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    console.log("Đã relogin thành công")
+                    console.log("Đã re-login thành công")
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
                     const chatContent = response.data;
@@ -146,7 +146,7 @@ function Home() {
             previewLink();
         }
 
-        if (selectedType == 'people') {
+        if (selectedType === 'people') {
             const requestRoomChatMessage = {
                 action: "onchat",
                 data: {
@@ -159,7 +159,7 @@ function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMessage));
         }
-        if (selectedType == 'room') {
+        if (selectedType === 'room') {
             const requestRoomChatMessage = {
                 action: "onchat",
                 data: {
@@ -206,7 +206,8 @@ function Home() {
                     sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
                 }
                 if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                    const chatContent = response.data.chatData;
+                    const chatContent = response.data;
+                    // const chatContent = response.data.chatData;
                     setChatContent(chatContent);
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
