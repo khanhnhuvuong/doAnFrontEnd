@@ -3,18 +3,17 @@
 
 .gradient-custom {
     /* fallback for old browsers */
-    background: #84fab0;
-
+    background: #84c9fa;
     /* Chrome 10-25, Safari 5.1-6 */
     background: -webkit-linear-gradient(
             to bottom right,
-            rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5)
+            rgba(146, 193, 246, 0.5), rgba(66, 186, 246, 0.5)
     );
 
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background: linear-gradient(
             to bottom right,
-            rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5)
+            rgba(146, 193, 246, 0.5), rgba(66, 186, 246, 0.5)
     );
 }
 
@@ -26,8 +25,8 @@
     background-color: aliceblue;
     position: absolute;
     margin-top: 5px;
-    top: 33%;
-    left: 950px;
+    top: 34%;
+    left: 915px;
     width: 250px;
     height: auto;
     border: 1px solid gray;
@@ -38,6 +37,40 @@
 .emoji-picker .emoji {
     margin: 5px;
 }
+
+.popup {
+    border-radius: 5px;
+    background-color: aliceblue;
+    position: absolute;
+    margin-top: 5px;
+    top: 86%;
+    left: 1050px;
+    width: 150px;
+    height: auto;
+    border: 1px solid gray;
+    padding: 10px;
+    z-index: 999;
+}
+
+.popup-item {
+    margin: 7px;
+}
+
+.modal-image {
+    width: 150px;
+    cursor: pointer;
+}
+
+/* ChatBox.css */
+
+/*.modal-image {*/
+/*    cursor: pointer;*/
+/*    width: 20%;*/
+/*    height: auto;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);*/
+/*}*/
+
 
 /*.emoji-picker {*/
 /*    position: absolute;*/

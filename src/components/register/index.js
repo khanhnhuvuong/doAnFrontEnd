@@ -60,8 +60,8 @@ function Register() {
                     // Đăng ký thành công
                     setIsLoginSuccess(true);
                     // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
-                    history.push('/login');
-                    window.location.href = '/login';
+                    history.push('/');
+                    // window.location.href = '/login';
 
                 }
             };
@@ -77,16 +77,17 @@ function Register() {
                     <MDBInput wrapperClass='mb-4' label='Nhập tên người dùng' size='lg' id='form1' type='text'
                               value={user}
                               onChange={(e) => setUser(e.target.value)}
+                              style={{color: 'black'}}
                     />
                     <MDBInput wrapperClass='mb-4' label='Nhập mật khẩu của bạn' size='lg' id='form3' type='password'
                               value={pass}
                               onChange={(e) => setPass(e.target.value)}
+                              style={{color: 'black'}}
                     />
-                    <div className='d-flex flex-row justify-content-center mb-4'>
-                        <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Đồng ý với điều khoản và dịch vụ'/>
-                    </div>
                     <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleRegister}>Đăng ký</MDBBtn>
-                    <p>Bạn đã có tài khoản? <Link to="/">Đăng nhập</Link></p>
+                    <div className='d-flex flex-row justify-content-center mb-4'>
+                        <p>Bạn đã có tài khoản? <Link to="/">Đăng nhập</Link></p>
+                    </div>
                 </MDBCardBody>
             </MDBCard>
         </MDBContainer>

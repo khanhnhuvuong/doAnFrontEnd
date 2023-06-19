@@ -13,13 +13,13 @@ import {
     MDBCardImage, MDBCardText, MDBCardTitle,
 } from "mdb-react-ui-kit";
 import Linkify from 'react-linkify';
-export default function ChatBox({chatContent, webPreview}) {
+import ModalImage from "react-modal-image";
+
+export default function ChatBox({chatContent, webPreview, isOnline}) {
     const chatBoxRef = useRef(null);
     const isImage = (str) => {
         return str.includes('images');
     };
-
-
 
     useEffect(() => {
         // tu dong cuon xuong cuoi
@@ -61,19 +61,19 @@ export default function ChatBox({chatContent, webPreview}) {
                                                         className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
                                                         {decodeURIComponent(mess.mes)}
                                                     </span>
-                                                    {webPreview && (
-                                                        <MDBCard style={{width: '350px', height: '250px'}}>
-                                                            <MDBCardImage src={webPreview.image} position='top'
+                                                    {webPreview[decoratedHref] && (
+                                                        <MDBCard  key={decoratedHref} style={{width: '350px', height: 'auto'}}>
+                                                            <MDBCardImage src={webPreview[decoratedHref].image} position='top'
                                                                           alt='...' style={{
                                                                 width: '100px',
                                                                 height: '100px',
                                                                 margin: 'auto'
                                                             }}/>
                                                             <MDBCardBody>
-                                                                <MDBCardTitle>{webPreview.title}</MDBCardTitle>
+                                                                <MDBCardTitle>{webPreview[decoratedHref].title}</MDBCardTitle>
                                                                 <MDBCardText>
-                                                                    {webPreview.description}                                                                </MDBCardText>
-                                                                <a>{webPreview.link}</a>
+                                                                    {webPreview[decoratedHref].description}                                                                </MDBCardText>
+                                                                <MDBBtn>Click to open{webPreview[decoratedHref].link}</MDBBtn>
                                                             </MDBCardBody>
                                                         </MDBCard>
                                                     )}
@@ -81,15 +81,20 @@ export default function ChatBox({chatContent, webPreview}) {
                                             )}>
                                                 <p className="small p-2 me-3 mb-3 text-white rounded-3 btn-primary">
                                                     {isImage(decodeURIComponent(mess.mes)) ?
-                                                        (<MDBCardImage
-                                                            style={{width: '350px', height: 'auto'}}
-                                                            src={decodeURIComponent(mess.mes)}></MDBCardImage>) : (decodeURIComponent(mess.mes))
+                                                        (<ModalImage
+                                                            small={decodeURIComponent(mess.mes)}
+                                                            large={decodeURIComponent(mess.mes)}
+                                                            alt="Image"
+                                                            hideDownload={true}
+                                                            hideZoom={true}
+                                                            className="modal-image"
+                                                        />) : (decodeURIComponent(mess.mes))
                                                     }
                                                 </p>
                                             </Linkify>
                                         </div>
                                         <img
-                                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                                            src="https://www.shareicon.net/data/512x512/2016/05/26/771187_man_512x512.png"
                                             alt="avatar 1"
                                             style={{width: "45px", height: "100%"}}
                                         />
@@ -106,30 +111,31 @@ export default function ChatBox({chatContent, webPreview}) {
                                     </div>
                                     <div className="d-flex flex-row justify-content-start">
                                         <img
-                                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                                            src="https://img.freepik.com/free-icon/avatar_318-158392.jpg?w=2000"
                                             alt="avatar 1"
                                             style={{width: "45px", height: "100%"}}
                                         />
+                                        <span style={{marginLeft: '-17px', marginTop: '33px', fontSize: '12px'}}>{isOnline ? <MDBIcon fas icon="circle" style={{color: 'blue'}}/> : <MDBIcon fas icon="circle" style={{color: 'grey'}}/>}</span>
                                         <div>
                                             <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
                                                 <a href={decoratedHref} target="_blank" rel="noopener noreferrer"
                                                    key={key}>
-                            <span className="small p-2 ms-3 mb-3 rounded-3" style={{backgroundColor: "#f5f6f7"}}>
-                        {decodeURIComponent(mess.mes)}
-                            </span>
-                                                    {webPreview && (
+                                                <span className="small p-2 ms-3 mb-3 rounded-3" style={{backgroundColor: "#f5f6f7"}}>
+                                                    {decodeURIComponent(mess.mes)}
+                                                    </span>
+                                                    {webPreview[decoratedHref] && (
                                                         <MDBCard style={{width: '350px', height: '250px'}}>
-                                                            <MDBCardImage src={webPreview.image} position='top'
+                                                            <MDBCardImage src={webPreview[decoratedHref].image} position='top'
                                                                           alt='...' style={{
                                                                 width: '100px',
                                                                 height: '100px',
                                                                 margin: 'auto'
                                                             }}/>
                                                             <MDBCardBody>
-                                                                <MDBCardTitle>{webPreview.title}</MDBCardTitle>
+                                                                <MDBCardTitle>{webPreview[decoratedHref].title}</MDBCardTitle>
                                                                 <MDBCardText>
-                                                                    {webPreview.description}                                                                </MDBCardText>
-                                                                <a>{webPreview.link}</a>
+                                                                    {webPreview[decoratedHref].description}                                                                </MDBCardText>
+                                                                <MDBBtn>Click to open{webPreview[decoratedHref].link}</MDBBtn>
                                                             </MDBCardBody>
                                                         </MDBCard>
                                                     )}
@@ -138,15 +144,18 @@ export default function ChatBox({chatContent, webPreview}) {
                                                 <p className="small p-2 ms-3 mb-3 rounded-3"
                                                    style={{backgroundColor: "#f5f6f7"}}>
                                                     {isImage(decodeURIComponent(mess.mes)) ?
-                                                        (<MDBCardImage
-                                                            style={{width: '350px', height: 'auto'}}
-                                                            src={decodeURIComponent(mess.mes)}></MDBCardImage>) : (decodeURIComponent(mess.mes))
+                                                        (<ModalImage
+                                                            small={decodeURIComponent(mess.mes)}
+                                                            large={decodeURIComponent(mess.mes)}
+                                                            alt="Image"
+                                                            hideDownload={true}
+                                                            hideZoom={true}
+                                                            className="modal-image"
+                                                        />) : (decodeURIComponent(mess.mes))
                                                     }
                                                 </p>
                                             </Linkify>
-
                                         </div>
-
                                     </div>
                                 </MDBCardBody>
                             </li>

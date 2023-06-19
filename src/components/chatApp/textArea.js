@@ -3,10 +3,16 @@ import {MDBIcon, MDBTextArea} from "mdb-react-ui-kit";
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
 import {initializeApp} from "firebase/app";
 
-
 function TextArea({handleSendMessage, selectedUser}) {
     const [message, setMessage] = useState("");
     const fileInputImage = useRef();
+    const [showPopup, setShowPopup] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    };
+
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState('');
     const [selectedEmojis, setSelectedEmojis] = useState([]);
@@ -36,26 +42,21 @@ function TextArea({handleSendMessage, selectedUser}) {
     }
 
     function handleClickSend() {
-        if (message !== '') {
-            const messageWithEmojis = selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message;
-            handleSendMessage(messageWithEmojis);
+        const messageWithEmojis = selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message;
+        const messageToSend = imagePreview ? `${messageWithEmojis} ${imagePreview}` : messageWithEmojis;
+
+        if (messageToSend !== '') {
+            handleSendMessage(messageToSend);
             setMessage('');
             setSelectedEmojis([]);
-        }
-    }
-
-    function handleSendIcon() {
-        if (selectedEmojis.length > 0) {
-            handleSendMessage(selectedEmojis.join(''));
-            setSelectedEmojis([]);
-            setShowEmojiPicker(false);
+            setImagePreview(null);
         }
     }
 
     function handleKeyPress(e) {
         if (e.key === 'Enter') {
             handleClickSend();
-            handleSendIcon();
+            // handleSendIcon();
         }
     }
 
@@ -97,9 +98,9 @@ function TextArea({handleSendMessage, selectedUser}) {
     }
 
     return (
-        <div style={{width: '800px', display: 'flex'}}>
+        <div style={{width: '810px', display: 'flex'}}>
             <input
-                style={{width: "800px", height: '40px'}}
+                style={{width: "810px", height: '35px'}}
                 label="Message"
                 id="textAreaExample"
                 value={selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message}
@@ -123,8 +124,29 @@ function TextArea({handleSendMessage, selectedUser}) {
                onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                 <MDBIcon fas icon="smile"/>
             </a>
+            <a className="ms-3 text-muted"
+               style={{marginTop: '5px'}}>
+                <MDBIcon fas icon="plus-circle" onClick={togglePopup} />
+            </a>
+            {showPopup && (
+                <div className="popup">
+                    <a className="popup-item">
+                        <MDBIcon fas icon="phone" />
+                    </a>
+                    <a className="popup-item">
+                        <MDBIcon fas icon="video" />
+                    </a>
+                    <a className="popup-item">
+                        <MDBIcon fas icon="microphone" />
+                    </a>
+                    <a className="popup-item">
+                        <MDBIcon fas icon="camera" />
+                    </a>
+                </div>
+            )}
             <a className="ms-3" onClick={handleClickSend}
-               style={{marginTop: '5px', color: '#3b71ca'}}>
+               style={{marginTop: '5px', color: '#3b71ca'}}
+            >
                 <MDBIcon fas icon="paper-plane"/>
             </a>
             {showEmojiPicker && (

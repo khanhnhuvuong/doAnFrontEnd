@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 
 import {MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
 import ChatList from "../components/chatApp/chatList";
@@ -15,11 +15,8 @@ function Home() {
     const [userList, setUserList] = useState([]);
     const [chatContent, setChatContent] = useState([]);
     const apiKey = '645f9baa9ada4f18c05d90c2526108a7';
-    const [webPreview, setWebPreview] = useState(null);
-    const isURL = (text) => {
-        const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-        return urlPattern.test(text);
-    };
+    const [webPreview, setWebPreview] = useState({});
+    const [isOnline, setIsOnline] = useState(null);
 
     function handleCreateRoom(roomName) {
         const chatData = {
@@ -64,9 +61,39 @@ function Home() {
         socket.send(JSON.stringify(requestListUser));
     }
 
+    const isURL = (text) => {
+        const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+        return urlPattern.test(text);
+    };
+
+    function checkUserStatus(userName) {
+        const requestRelogin = {
+            action: "onchat",
+            data: {
+                event: "RE_LOGIN",
+                data: {
+                    user: sessionStorage.getItem('user'),
+                    code: btoa(sessionStorage.getItem('relogin_code'))
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestRelogin));
+        const requestCheckUser = {
+            action: "onchat",
+            data: {
+                event: "CHECK_USER",
+                data: {
+                    user: userName,
+                },
+            },
+        };
+        socket.send(JSON.stringify(requestCheckUser));
+    }
+
+
     function handleClickMess(userName, type) {
         console.log(userName);
-        if (type === 1) {
+        if (type == 1) {
             setSelectedUser(userName);
             setSelectedType('room');
             const requestRelogin = {
@@ -75,7 +102,7 @@ function Home() {
                     event: "RE_LOGIN",
                     data: {
                         user: sessionStorage.getItem('user'),
-                        code: sessionStorage.getItem('relogin_code')
+                        code: btoa(sessionStorage.getItem('relogin_code'))
                     },
                 },
             };
@@ -93,19 +120,20 @@ function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMessage));
             console.log("Đã gửi yêu cầu lay tin nhan");
-            socket.onmessage = (event) => {
-                const response = JSON.parse(event.data);
-                if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    console.log("Đã relogin thành công")
-                }
-                if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                    const chatContent = response.data.chatData;
-                    setChatContent(chatContent);
-                    console.log(chatContent);
-                } else {
-                    console.log(response.mes)
-                }
-            }
+            // socket.onmessage = (event) => {
+            //     const response = JSON.parse(event.data);
+            //     if (response.status === 'success' && response.event === 'RE_LOGIN') {
+            //         console.log("Đã relogin thành công")
+            //     }
+            //     if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
+            //         const chatContent = response.data.chatData;
+            //         setChatContent(chatContent);
+            //         console.log(chatContent);
+            //     } else {
+            //         console.log(response.mes)
+            //     }
+            // }
+
         } else {
             setSelectedType('people');
             setSelectedUser(userName);
@@ -115,7 +143,7 @@ function Home() {
                     event: "RE_LOGIN",
                     data: {
                         user: sessionStorage.getItem('user'),
-                        code: sessionStorage.getItem('relogin_code')
+                        code: btoa(sessionStorage.getItem('relogin_code'))
                     },
                 },
             };
@@ -135,19 +163,20 @@ function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMessage));
             console.log("Đã gửi yêu cầu lay tin nhan");
-            socket.onmessage = (event) => {
-                const response = JSON.parse(event.data);
-                if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    console.log("Đã re-login thành công")
-                }
-                if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
-                    const chatContent = response.data;
-                    setChatContent(chatContent);
-                    console.log(chatContent);
-                } else {
-                    console.log(response.mes)
-                }
-            }
+            // socket.onmessage = (event) => {
+            //     const response = JSON.parse(event.data);
+            //     if (response.status === 'success' && response.event === 'RE_LOGIN') {
+            //         console.log("Đã relogin thành công")
+            //     }
+            //     if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
+            //         const chatContent = response.data;
+            //         setChatContent(chatContent);
+            //         console.log(chatContent);
+            //     } else {
+            //         console.log(response.mes)
+            //     }
+            // }
+            checkUserStatus(userName);
         }
     }
 
@@ -165,31 +194,40 @@ function Home() {
             },
         };
         socket.send(JSON.stringify(requestSendMessageRoom));
-        console.log("gui tin nhan tu", sessionStorage.getItem('user'))
         console.log("gui tin nhan den", selectedUser)
         console.log("gui tin nhan voi noi dung", mes)
 
-        if (isURL(mes)) {
-            // Gửi yêu cầu để lấy thông tin từ linkpreview.net
-            const getLinkPreview = async (url) => {
-                try {
-                    const response = await axios.get(`https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(url)}`);
-                    return response.data;
-                } catch (error) {
-                    console.error('Error fetching link preview:', error);
-                    return null;
-                }
-            };
+        const requestWebPreview = (url) => {
+            // Gửi yêu cầu để lấy thông tin web preview từ url bằng Axios
+            axios
+                .get(`https://api.linkpreview.net/?key=${apiKey}&q=${encodeURIComponent(url)}`)
+                .then((response) => {
+                    const preview = response.data;
+                    console.log("Web Preview:", preview);
 
-            const previewLink = async () => {
-                const preview = await getLinkPreview(mes);
-                console.log('Web Preview:', preview);
-                setWebPreview(preview);
-            };
-            previewLink();
+                    // Cập nhật thông tin web preview vào state webPreview với key là đường link (mes)
+                    setWebPreview((prevWebPreview) => ({
+                        ...prevWebPreview,
+                        [url]: preview,
+                    }));
+                })
+                .catch((error) => {
+                    console.error("Error fetching link preview:", error);
+                });
+        };
+
+        if (isURL(mes)) {
+            if (webPreview[mes]) {
+                // Đường link đã tồn tại trong webPreview, sử dụng thông tin web preview đã lưu trữ
+                console.log('Web Preview:', webPreview[mes]);
+            } else {
+                // Đường link chưa tồn tại trong webPreview, gửi yêu cầu để lấy thông tin từ API
+                requestWebPreview(mes);
+            }
         }
 
-        if (selectedType === 'people') {
+
+        if (selectedType == 'people') {
             const requestRoomChatMessage = {
                 action: "onchat",
                 data: {
@@ -202,7 +240,7 @@ function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMessage));
         }
-        if (selectedType === 'room') {
+        if (selectedType == 'room') {
             const requestRoomChatMessage = {
                 action: "onchat",
                 data: {
@@ -231,7 +269,7 @@ function Home() {
                         event: "RE_LOGIN",
                         data: {
                             user: sessionStorage.getItem('user'),
-                            code: sessionStorage.getItem('relogin_code')
+                            code: atob(sessionStorage.getItem('relogin_code'))
                         },
                     },
                 }
@@ -246,11 +284,10 @@ function Home() {
             socket.onmessage = (event) => {
                 const response = JSON.parse(event.data);
                 if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+                    sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE));
                 }
                 if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                    const chatContent = response.data;
-                    // const chatContent = response.data.chatData;
+                    const chatContent = response.data.chatData;
                     setChatContent(chatContent);
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
@@ -261,6 +298,11 @@ function Home() {
                     const newUserList = response.data;
                     setUserList(newUserList);
                 }
+                if (response.status === "success" && response.event === "CHECK_USER") {
+                    const status = response.data.status;
+                    console.log(status);
+                    setIsOnline(status);
+                }
             }
 
             setSocket(socket);
@@ -268,13 +310,13 @@ function Home() {
 
         socket.addEventListener("message", (event) => {
             const message = JSON.parse(event.data);
-            const { event: eventType, data } = message;
+            const {event: eventType, data} = message;
 
             //hien thi tin nhan vua nhan duoc len chatBox
             if (eventType === "SEND_CHAT") {
                 const newChatContent = {
                     name: data.name,
-                    createAt:moment( data.createAt).format('YYYY-MM-DD HH:mm:ss'),
+                    createAt: moment(data.createAt).format('YYYY-MM-DD HH:mm:ss'),
                     mes: data.mes,
                 };
 
@@ -292,14 +334,14 @@ function Home() {
 
 
     return (
-        <MDBContainer fluid className="py-2 gradient-custom" style={{ backgroundColor: "#eee" }}>
+        <MDBContainer fluid className="py-2 gradient-custom" style={{backgroundColor: "#eee"}}>
             <MDBRow>
-                <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser} handleCreateRoom={handleCreateRoom}
-                          handleJoinRoom={handleJoinRoom}/>
+                <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} setSelectedUser={setSelectedUser}/>
                 {selectedUser && (
                     <MDBCol md="6" lg="7" xl="8">
-                        <ChatBox chatContent={chatContent} selectedUser={selectedUser} webPreview={webPreview} setWebPreview={setWebPreview}/>
-                        <TextArea selectedUser={selectedUser} handleSendMessage={handleSendMessage}  />
+                        <ChatBox chatContent={chatContent} selectedUser={selectedUser} webPreview={webPreview}
+                                 setWebPreview={setWebPreview} isOnline={isOnline}/>
+                        <TextArea selectedUser={selectedUser} handleSendMessage={handleSendMessage}/>
                     </MDBCol>
                 )}
             </MDBRow>

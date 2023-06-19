@@ -12,12 +12,13 @@ import {
     from 'mdb-react-ui-kit';
 
 function Login() {
-    // const [roomName, setRoomName] = useState("");
     const [socket, setSocket] = useState(null);
     const [userList, setUserList] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
+    const [error, setError] = useState("");
+
 
     const history = useHistory();
 
@@ -49,9 +50,7 @@ function Login() {
             },
         };
         socket.send(JSON.stringify(requestData));
-
         console.log("da gui thong tin login cho server")
-
         const requestListUser = {
             action: 'onchat',
             data: {
@@ -63,15 +62,16 @@ function Login() {
         socket.onmessage = (event) => {
             const response = JSON.parse(event.data);
             if (response && response.status === "success" &&  response.event === "LOGIN") {
-                sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
+                sessionStorage.setItem('relogin_code', btoa(response.data.RE_LOGIN_CODE));
                 console.log("Đã lưu relogin_code vào session");
                 setIsLogin(true);
+            }
+            if (response && response.status === "error" &&  response.event === "LOGIN") {
+                setError('Sai tài khoản hoặc mật khẩu')
             }
             if (response.status === "success" && response.event === "GET_USER_LIST") {
                 const users = response.data;
                 setUserList(users);
-                // setIsLogin(true);
-                console.log("da luu vao user");
                 history.push('/home', {userList : users});
             }
         }
@@ -80,16 +80,6 @@ function Login() {
     useEffect(() => {
         if (isLogin) {
             sessionStorage.setItem('user', user);
-            sessionStorage.setItem('pass', pass);
-        }
-        if (socket) {
-            socket.onmessage = (event) => {
-                const responseData = JSON.parse(event.data);
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                if (responseData && responseData.status === "success") {
-                sessionStorage.setItem('re_login_code', responseData.data.RE_LOGIN_CODE);
-                }
-            };
         }
     }, [socket, isLogin, user, pass]);
 
@@ -102,16 +92,19 @@ function Login() {
                     <MDBInput wrapperClass='mb-4' label='Nhập tên người dùng' size='lg' id='form1' type='text'
                               value={user}
                               onChange={(e) => setUser(e.target.value)}
+                              style={{color: 'black'}}
                     />
                     <MDBInput wrapperClass='mb-4' label='Nhập mật khẩu của bạn' size='lg' id='form3' type='password'
                               value={pass}
                               onChange={(e) => setPass(e.target.value)}
+                              style={{color: 'black'}}
                     />
                     <div className='d-flex flex-row justify-content-center mb-4'>
                         <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Nhớ tài khoản'/>
                     </div>
                     <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleGetUserList}>Đăng nhập</MDBBtn>
                     <p>Bạn chưa có tài khoản? <Link to="/register">Đăng ký</Link></p>
+                    {error && <p className='d-flex flex-row justify-content-center mb-4' style={{color: 'red'}}>{error}</p>}
                 </MDBCardBody>
             </MDBCard>
         </MDBContainer>
