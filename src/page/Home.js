@@ -138,7 +138,7 @@ function Home() {
             socket.onmessage = (event) => {
                 const response = JSON.parse(event.data);
                 if (response.status === 'success' && response.event === 'RE_LOGIN') {
-                    console.log("Đã relogin thành công")
+                    console.log("Đã re-login thành công")
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
                     const chatContent = response.data;
@@ -249,7 +249,8 @@ function Home() {
                     sessionStorage.setItem('relogin_code', response.data.RE_LOGIN_CODE);
                 }
                 if (response.status === 'success' && response.event === 'GET_ROOM_CHAT_MES') {
-                    const chatContent = response.data.chatData;
+                    const chatContent = response.data;
+                    // const chatContent = response.data.chatData;
                     setChatContent(chatContent);
                 }
                 if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
