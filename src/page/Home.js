@@ -21,9 +21,52 @@ function Home() {
         return urlPattern.test(text);
     };
 
+    function handleCreateRoom(roomName) {
+        const chatData = {
+            action: 'onchat',
+            data: {
+                event: 'CREATE_ROOM',
+                data: {
+                    name: roomName, // Tên phòng từ người dùng nhập vào
+                }
+            },
+        };
+        socket.send(JSON.stringify(chatData));
+        console.log("Đã gửi tin nhắn lên cho server");
+        setSelectedUser(roomName);
+        const requestListUser = {
+            action: 'onchat',
+            data: {
+                event: 'GET_USER_LIST',
+            },
+        };
+        socket.send(JSON.stringify(requestListUser));
+    }
+
+    function handleJoinRoom(roomName) {
+        const chatData = {
+            action: 'onchat',
+            data: {
+                event: 'JOIN_ROOM',
+                data: {
+                    name: roomName, // Tên phòng từ người dùng nhập vào
+                }
+            },
+        };
+        socket.send(JSON.stringify(chatData));
+        console.log("Gửi yêu cầu thành công");
+        const requestListUser = {
+            action: 'onchat',
+            data: {
+                event: 'GET_USER_LIST',
+            },
+        };
+        socket.send(JSON.stringify(requestListUser));
+    }
+
     function handleClickMess(userName, type) {
         console.log(userName);
-        if (type == 1) {
+        if (type === 1) {
             setSelectedUser(userName);
             setSelectedType('room');
             const requestRelogin = {
@@ -250,7 +293,8 @@ function Home() {
     return (
         <MDBContainer fluid className="py-2 gradient-custom" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
-                <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser}/>
+                <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser} handleCreateRoom={handleCreateRoom}
+                          handleJoinRoom={handleJoinRoom}/>
                 {selectedUser && (
                     <MDBCol md="6" lg="7" xl="8">
                         <ChatBox chatContent={chatContent} selectedUser={selectedUser} webPreview={webPreview} setWebPreview={setWebPreview}/>
