@@ -15,7 +15,7 @@ function Register() {
     const [roomName, setRoomName] = useState("");
     const [socket, setSocket] = useState(null);
     const [isLoginSuccess, setIsLoginSuccess] = useState(false);
-
+    const [error, setError] = useState("");
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
 
@@ -62,7 +62,9 @@ function Register() {
                     // Lưu trữ thông tin đăng nhập, ví dụ: lưu trữ token
                     history.push('/');
                     // window.location.href = '/login';
-
+                }
+                if (responseData && responseData.status === "error" &&  responseData.event === "REGISTER") {
+                    setError('Tài khoản đã tồn tại')
                 }
             };
         }
@@ -88,6 +90,7 @@ function Register() {
                     <div className='d-flex flex-row justify-content-center mb-4'>
                         <p>Bạn đã có tài khoản? <Link to="/">Đăng nhập</Link></p>
                     </div>
+                    {error && <p className='d-flex flex-row justify-content-center mb-4' style={{color: 'red'}}>{error}</p>}
                 </MDBCardBody>
             </MDBCard>
         </MDBContainer>
