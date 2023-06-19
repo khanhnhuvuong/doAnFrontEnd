@@ -38,15 +38,20 @@ export default function ChatBox({chatContent, webPreview, isOnline}) {
     }
 
     return (
-        <MDBTypography listUnStyled style={{height: "432px", overflow: "scroll", marginTop: '102px'}} ref={chatBoxRef}>
+        <MDBTypography listUnStyled style={{
+            height: "432px", // Chiều cao tối đa của chatBox
+            overflowY: "auto", // Hiển thị thanh cuộn theo chiều dọc khi nội dung vượt quá chiều cao
+            marginTop: '102px',
+            display: 'flex',
+            flexDirection: 'column',
+        }} ref={chatBoxRef}>
             <ul>
                 {sortedChatContent.map((mess, index) => (
                     <div key={index} style={{width: '750px'}}>
                         {mess.name === sessionStorage.getItem('user') ? (
                             <li className="d-flex mb-3">
                                 <MDBCardBody className="p-0 m-lg-1">
-                                    <div className="d-flex"
-                                         style={{marginLeft: '537px'}}>
+                                    <div className="d-flex justify-content-end ">
                                         <p className="small mb-1 text-muted"
                                         >{mess.createAt} -</p>
                                         <p className="small mb-1 fw-bold"
@@ -73,7 +78,6 @@ export default function ChatBox({chatContent, webPreview, isOnline}) {
                                                                 <MDBCardTitle>{webPreview[decoratedHref].title}</MDBCardTitle>
                                                                 <MDBCardText>
                                                                     {webPreview[decoratedHref].description}                                                                </MDBCardText>
-                                                                <MDBBtn>Click to open{webPreview[decoratedHref].link}</MDBBtn>
                                                             </MDBCardBody>
                                                         </MDBCard>
                                                     )}
@@ -135,7 +139,6 @@ export default function ChatBox({chatContent, webPreview, isOnline}) {
                                                                 <MDBCardTitle>{webPreview[decoratedHref].title}</MDBCardTitle>
                                                                 <MDBCardText>
                                                                     {webPreview[decoratedHref].description}                                                                </MDBCardText>
-                                                                <MDBBtn>Click to open{webPreview[decoratedHref].link}</MDBBtn>
                                                             </MDBCardBody>
                                                         </MDBCard>
                                                     )}

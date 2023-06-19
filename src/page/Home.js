@@ -6,6 +6,8 @@ import ChatBox from "../components/chatApp/chatBox";
 import TextArea from "../components/chatApp/textArea";
 import moment from "moment";
 import axios from "axios";
+import {getStorage, ref, uploadString, getDownloadURL} from "firebase/storage";
+import {initializeApp} from "firebase/app";
 
 
 function Home() {
@@ -17,6 +19,18 @@ function Home() {
     const apiKey = '645f9baa9ada4f18c05d90c2526108a7';
     const [webPreview, setWebPreview] = useState({});
     const [isOnline, setIsOnline] = useState(null);
+    const firebaseConfig = {
+        apiKey: "AIzaSyCaOLY5fIOYCW2NBSZkkaY9Dt3QJhp7J8Y",
+        authDomain: "appchat-efb9e.firebaseapp.com",
+        projectId: "appchat-efb9e",
+        storageBucket: "appchat-efb9e.appspot.com",
+        messagingSenderId: "809554332860",
+        appId: "1:809554332860:web:667caf7cfd4c41021d94b9"
+    };
+
+    //Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
 
     function handleCreateRoom(roomName) {
         const chatData = {
@@ -163,21 +177,9 @@ function Home() {
             };
             socket.send(JSON.stringify(requestRoomChatMessage));
             console.log("Đã gửi yêu cầu lay tin nhan");
-            // socket.onmessage = (event) => {
-            //     const response = JSON.parse(event.data);
-            //     if (response.status === 'success' && response.event === 'RE_LOGIN') {
-            //         console.log("Đã relogin thành công")
-            //     }
-            //     if (response.status === 'success' && response.event === 'GET_PEOPLE_CHAT_MES') {
-            //         const chatContent = response.data;
-            //         setChatContent(chatContent);
-            //         console.log(chatContent);
-            //     } else {
-            //         console.log(response.mes)
-            //     }
-            // }
             checkUserStatus(userName);
         }
+
     }
 
     function handleSendMessage(mes) {
@@ -204,16 +206,35 @@ function Home() {
                 .then((response) => {
                     const preview = response.data;
                     console.log("Web Preview:", preview);
-
                     // Cập nhật thông tin web preview vào state webPreview với key là đường link (mes)
+                    // setWebPreview((prevWebPreview) => ({
+                    //     ...prevWebPreview,
+                    //     [url]: preview,
+                    // }));
+                    // Lưu thông tin web preview vào Firebase Storage
+                    const firebaseApp = initializeApp(firebaseConfig);
+                    const storage = getStorage(firebaseApp);
+                    const storageRef = ref(storage, "webprevies/" + preview.url + ".json"); // Sử dụng child() để tạo thư mục con
+
+                    // Chuyển đổi đối tượng preview thành chuỗi JSON
+                    const previewJSON = JSON.stringify(preview);
+                    uploadString(storageRef, previewJSON, "raw")
+                        .then(() => {
+                            console.log("Web preview uploaded to Firebase Storage");
+                        })
+                        .catch((error) => {
+                            console.error("Error uploading web preview to Firebase Storage:", error);
+                        });
+
                     setWebPreview((prevWebPreview) => ({
                         ...prevWebPreview,
                         [url]: preview,
                     }));
                 })
                 .catch((error) => {
-                    console.error("Error fetching link preview:", error);
-                });
+                        console.error("Error fetching link preview:", error);
+                    }
+                );
         };
 
         if (isURL(mes)) {
@@ -336,7 +357,9 @@ function Home() {
     return (
         <MDBContainer fluid className="py-2 gradient-custom" style={{backgroundColor: "#eee"}}>
             <MDBRow>
-                <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser} handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom} setSelectedUser={setSelectedUser}/>
+                <ChatList userList={userList} handleClickMess={handleClickMess} selectedUser={selectedUser}
+                          handleCreateRoom={handleCreateRoom} handleJoinRoom={handleJoinRoom}
+                          setSelectedUser={setSelectedUser}/>
                 {selectedUser && (
                     <MDBCol md="6" lg="7" xl="8">
                         <ChatBox chatContent={chatContent} selectedUser={selectedUser} webPreview={webPreview}

@@ -99,9 +99,6 @@ function Login() {
                               onChange={(e) => setPass(e.target.value)}
                               style={{color: 'black'}}
                     />
-                    <div className='d-flex flex-row justify-content-center mb-4'>
-                        <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='Nhớ tài khoản'/>
-                    </div>
                     <MDBBtn className='mb-4 w-100 gradient-custom-4' size='lg' onClick={handleGetUserList}>Đăng nhập</MDBBtn>
                     <p>Bạn chưa có tài khoản? <Link to="/register">Đăng ký</Link></p>
                     {error && <p className='d-flex flex-row justify-content-center mb-4' style={{color: 'red'}}>{error}</p>}

@@ -24,6 +24,7 @@ function TextArea({handleSendMessage, selectedUser}) {
         "🤠", "😇", "🥳", "🥺", "🤡", "🤓", "😎", "🤖", "👽", "👾", "🤡", "💩", "👻", "💀", "👺", "👹", "👿"
     ];
     const [imagePreview, setImagePreview] = useState(null);
+
     const firebaseConfig = {
         apiKey: "AIzaSyCaOLY5fIOYCW2NBSZkkaY9Dt3QJhp7J8Y",
         authDomain: "appchat-efb9e.firebaseapp.com",
@@ -44,7 +45,6 @@ function TextArea({handleSendMessage, selectedUser}) {
     function handleClickSend() {
         const messageWithEmojis = selectedEmojis.length > 0 ? `${message}${selectedEmojis.join('')}` : message;
         const messageToSend = imagePreview ? `${messageWithEmojis} ${imagePreview}` : messageWithEmojis;
-
         if (messageToSend !== '') {
             handleSendMessage(messageToSend);
             setMessage('');
@@ -71,7 +71,7 @@ function TextArea({handleSendMessage, selectedUser}) {
     function handleUploadImage(img) {
         const file = img.target.files[0];
         const storage = getStorage();
-        const storageRef = ref(storage, "images/" + file.name); // Sử dụng child() để tạo thư mục con
+        const storageRef = ref(storage, "images/" + file.name);
 
         uploadBytes(storageRef, file)
             .then((snapshot) => {
@@ -81,15 +81,12 @@ function TextArea({handleSendMessage, selectedUser}) {
 
             })
             .then((downloadURL) => {
-                // Handle việc hiển thị hình ảnh trong chatBox
                 console.log("Download URL:", downloadURL);
 
                 // Gửi đường dẫn tải xuống đến hàm handleSendMessage để hiển thị trong chatBox
                 handleSendMessage(downloadURL);
                 setImagePreview(downloadURL); // Hiển thị hình ảnh đã tải lên
 
-                // Cập nhật giá trị của mess (nếu cần)
-                // setMess(downloadURL);
             })
             .catch((error) => {
                 console.error("Upload error:", error);
